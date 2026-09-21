@@ -1,3 +1,4 @@
+.gitignore
 CITATION.cff
 LICENSE
 manuscript/build_latex.py
