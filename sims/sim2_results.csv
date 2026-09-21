@@ -1,0 +1,3 @@
+"scenario","theta_true","bias_contrast","sd_contrast","bias_readout","sd_readout","d2_3_true_unidentified","mean_d2_3_readout"
+"S2",-0.037,0.0063,0.1096,-2e-04,0.0797,-0.0223,-0.0747
+"S3",-0.037,0.0032,0.1068,0.0033,0.0808,-0.0223,-0.0723

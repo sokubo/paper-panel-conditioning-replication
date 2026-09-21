@@ -1,0 +1,10 @@
+block,tau,twfe_true,twfe_reported,bias_observed,bias_formula,abs_diff_formula,invariance_gap_affine,invariance_gap_periodic,corrected_twfe,corrected_minus_true,corrected_se,n_tenure_dropped,n_coefs,max_abs_err,max_pre_shift,n_pre_coefs,rank_MX,rank_MZ,rank_MX_MZ,cols_MX_MZ,shift_k_minus5,shift_k_minus4,shift_k_minus3,max_abs_XMZ
+A_absorption,tau_sat,0.568188816352388,0.593743936179553,0.0255551198271655,0.0255551198271584,7.14012182712054e-15,4.44089209850063e-14,5.44009282066327e-15,,,,,,,,,,,,,,,,
+A_absorption,tau_lin,0.568188816352388,0.568188816352396,8.77076189453874e-15,-2.16120715916545e-15,1.09319690537042e-14,4.19664303308309e-14,8.88178419700125e-15,,,,,,,,,,,,,,,,
+A_absorption,tau_mix,0.568188816352388,0.593743936179563,0.0255551198271753,0.0255551198271571,1.82076576038526e-14,4.04121180963557e-14,2.66453525910038e-15,,,,,,,,,,,,,,,,
+B_correction,tau_mix,0.568188816352388,0.593743936179563,0.0255551198271753,,,,,0.577959368460382,0.00977055210799471,0.0505593700244601,4,,,,,,,,,,,,
+B_tenure_adoption,tau_mix,,0.697031347842465,,,,,,,,,4,,,,,,,,,,,,
+C_pretrend,tau_sat,,,,,,,,,,,,10,1.46826995006677e-14,0.183287492094567,3,,,,,,,,
+C2_exact_alignment_rank,tau_sat,,,,,,,,,,,,,,,,10,10,10,21,,,,
+C3_partial_alignment,tau_sat,,,,,,,,,,,,,,,,,,,,-0.141938900253278,-0.0544448050181675,-0.0142446658153598,5.99913097886541
+D_single_cohort,tau_sat,0.438424546112243,0.438424546112243,-1.11022302462516e-16,,,,,,,,,,,,,,,,,,,,
