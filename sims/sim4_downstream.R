@@ -156,10 +156,19 @@ mcs <- mc[, .(B = .N, bias_reported = mean(twfe_reported - 0.5), rmse_reported =
               mcse_reported = sd(twfe_reported) / sqrt(.N)), by = design]
 R <- rbindlist(res, fill = TRUE)
 fwrite(R, file.path(out_dir, "sim4_results.csv")); fwrite(pre, file.path(out_dir, "sim4_pretrend_coefs.csv")); fwrite(mcs, file.path(out_dir, "sim4_mc.csv"))
+## The transcript is written with base R's data.frame printer at a fixed, very wide console, so that its
+## layout does not depend on the installed data.table version. data.table 1.15 and later add a type row
+## under each header, and the column widths -- hence where a wide table wraps into a second block -- have
+## changed between versions; either makes a token-by-token comparison of this file fail on another machine
+## for no substantive reason. Every number in it is also in the CSVs written above, which are compared
+## value by value by the release check and asserted by check_manuscript_values.R.
+print_tab <- function(x) print(as.data.frame(x), digits = 4, row.names = FALSE)
+old_width <- getOption("width"); options(width = 10000)
 sink(file.path(out_dir, "sim4_results.txt"))
-cat("Simulation 4 v2 (T1 downstream) — seed 20260916\n\n"); cat(paste(txt, collapse = "\n"), "\n\n"); print(R, digits = 4)
-cat("\nEvent-study coefficients (block C):\n"); print(pre, digits = 4); cat("\nMonte Carlo by design (block E):\n"); print(mcs, digits = 4)
+cat("Simulation 4 v2 (T1 downstream) — seed 20260916\n\n"); cat(paste(txt, collapse = "\n"), "\n\n"); print_tab(R)
+cat("\nEvent-study coefficients (block C):\n"); print_tab(pre); cat("\nMonte Carlo by design (block E):\n"); print_tab(mcs)
 sink()
+options(width = old_width)
 cat(paste(txt, collapse = "\n"), "\n\n"); print(R, digits = 4); print(pre, digits = 4); print(mcs, digits = 4)
 ## manuscript values (Appendix C), each from a named column
 mv <- rbind(

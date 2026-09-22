@@ -15,5 +15,12 @@ tzcode source: internal
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
+other attached packages:
+[1] sandwich_3.1-1    data.table_1.18.4
+
 loaded via a namespace (and not attached):
-[1] compiler_4.6.0
+[1] zoo_1.8-15     compiler_4.6.0 grid_4.6.0     lattice_0.22-9
+
+Python side:
+Python 3.14.7
+numpy 2.5.3

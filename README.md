@@ -12,7 +12,7 @@ Preprint: arXiv:XXXX.XXXXX (to be filled at posting). Author: Shoki Okubo (Toyo 
 release-check records (`RELEASE_CHECK*`), which are written after the manifest.
 
 ## Checked commit and release record
-Computational commit checked against the manuscript: `a48bd805f765ac4fa8fd282437affedf2af57e31` — see `RELEASE_CHECK.md` (with `RELEASE_CHECK_run.log` and `RELEASE_CHECK_sessionInfo.txt` when a clean-copy run was made). Later commits change documentation and the release record only — `git diff --stat a48bd805f765ac4fa8fd282437affedf2af57e31 HEAD` lists them — so the scripts and outputs are those of the checked commit; after any change to code or outputs the release check is rerun and this line is regenerated.
+Computational commit checked against the manuscript: `a3b36521410184b0ce27815b6f8edef9ba09aba1` — see `RELEASE_CHECK.md` (with `RELEASE_CHECK_run.log` and `RELEASE_CHECK_sessionInfo.txt` when a clean-copy run was made). Later commits change documentation and the release record only — `git diff --stat a3b36521410184b0ce27815b6f8edef9ba09aba1 HEAD` lists them — so the scripts and outputs are those of the checked commit; after any change to code or outputs the release check is rerun and this line is regenerated.
 Tag matching this version of the manuscript: `paper-v0.9`. Tag matching the posted preprint version: to be added at posting (`arxiv-<id>v<n>`).
 Third-party reproduction: none. The release record is the author's own re-execution of the published snapshot in a clean copy.
 
@@ -50,8 +50,9 @@ Seeds are fixed inside each script (sim1–2: as in file; sim3: 20260830; sim4: 
 The release script (`release_check.sh` in the author's workflow, whose record is `RELEASE_CHECK.md`) exits with a
 nonzero status — and says so in its last line — if any step of the sequence fails, if any file listed in
 `FILE_MANIFEST.txt` is missing from the anonymous download or any unlisted file is present, if any restricted-data
-or review-material pattern matches, or if any regenerated numeric value differs from the shipped one by more than
-`TOL` (default 1e-8). A tag is placed only on a snapshot whose check passed.
+or review-material pattern matches, if any regenerated numeric value differs from the shipped one by more than
+`TOL` (default 1e-8), or if any output cannot be compared at all. A tag is placed only on a snapshot whose check
+passed.
 
 
 `RELEASE_CHECK.md` records a re-execution of the documented sequence in a clean copy of the published
@@ -66,11 +67,25 @@ analytic formulas, to tolerances stated in Appendix C, so a platform difference 
 disturb any claim; `sims/check_manuscript_values.R` asserts every number quoted in Appendices A and C
 from its named output column, at a scale-aware tolerance of 1e-10 for the floating-point identities (the archived residuals of order 1e-14 to 1e-16 are platform-specific and are not themselves required to recur).
 
-*Print format.* `sim4_results.txt` is a transcript of console output produced with `sink()`. `data.table`
-version 1.15 and later print a type-annotation row (`<char>`, `<num>`, `<int>`) beneath each table
-header; 1.14, under which the shipped transcript was written, does not. The check of 21 September 2026
-therefore reported this one file as differing in token count. The comparator now drops those rows before
-comparing, so later runs classify the file with the others; the numbers in it were unaffected.
+*Print format.* `sim4_results.txt` is a transcript of console output produced with `sink()`. It is now
+written with base R's data-frame printer at a fixed, very wide console, so its layout does not depend on
+the installed `data.table` version: 1.15 and later add a type-annotation row under each header, and the
+column widths — hence where a wide table wraps into a second block — have changed between versions, either
+of which makes a token-by-token comparison fail on another machine for no substantive reason. (The check of
+22 September 2026 hit exactly that: under `data.table` 1.18.4 the ten-row event-study table wrapped into two
+blocks, adding a header and ten row labels, while the shipped transcript, written under 1.14.10, printed it
+in one. The transcript was regenerated in the stable format; it carries the same 124 numbers, and the only
+tokens that disappeared are `data.table`'s row labels `1:` to `10:`.)
+
+The comparator keeps two safety nets for this file. It drops type-annotation rows, and if a transcript's
+token stream still differs it compares the **real numbers of the two streams in order** — every token
+containing a decimal point or an exponent — requiring the same count and agreement within the release
+tolerance, and prints the first divergence so that a genuine change is never hidden behind the word
+"format". Such a file is reported as `format differs; numbers match`, with the largest numerical
+difference; one whose real numbers differ in count, or by more than the tolerance, is a failure and stops
+the release. Integers in the transcript (ranks, counts) are not compared that way, but each is also
+produced by a deterministic script that fails loudly, and every number the paper quotes is asserted by
+`check_manuscript_values.R` against a named column of a CSV, which is compared token by token.
 
 The deterministic checks — steps 6 to 12 — carry no such caveat. They use no randomness, so they either
 reproduce exactly or fail. In the 21 September 2026 check

@@ -4,88 +4,36 @@ Cell-mean design (entries 1,5,13; T=19; tau(1)=g(1)=0): cells=41 columns=39 rank
 Tenure-determined adoption (D = 1{s>=4}): corrected coefficient on D = NA (NA = D aliased with tenure dummies: not identified)
 Rank-deficient event-study design (E in {0,2,4}, t 4..7, window 2..5): columns=8 rank=7 (all E even: k mod 2 = t mod 2)
 Exact alignment: rank(MX)=10, rank(MZ_tau)=10, rank([MX, MZ_tau])=10 of 21 columns -> (R) fails; no within-sample correction
-Partial alignment (delta_i in {6,7}): composition balanced (share at delta=6 is 0.5 in every (k,t)); rank([W0,X]) = 44 of 44; shifts at k=-5,-4,-3: -0.1419389003 -0.0544448050 -0.0142446658; max|X'M Z_tau| = 5.999 
+Partial alignment (delta_i in {6,7}): composition balanced (share at delta=6 is 0.5 in every (k,t)); rank([W0,X]) = 44 of 44; shifts at k=-5,-4,-3: -0.1419389003 -0.0544448050 -0.0142446658; max|X'M Z_tau| = 5.999  
 
-                     block     tau twfe_true twfe_reported bias_observed
-1:            A_absorption tau_sat    0.5682        0.5937     2.556e-02
-2:            A_absorption tau_lin    0.5682        0.5682     8.771e-15
-3:            A_absorption tau_mix    0.5682        0.5937     2.556e-02
-4:            B_correction tau_mix    0.5682        0.5937     2.556e-02
-5:       B_tenure_adoption tau_mix        NA        0.6970            NA
-6:              C_pretrend tau_sat        NA            NA            NA
-7: C2_exact_alignment_rank tau_sat        NA            NA            NA
-8:    C3_partial_alignment tau_sat        NA            NA            NA
-9:         D_single_cohort tau_sat    0.4384        0.4384    -1.110e-16
-   bias_formula abs_diff_formula invariance_gap_affine invariance_gap_periodic
-1:    2.556e-02        7.140e-15             4.441e-14               5.440e-15
-2:   -2.161e-15        1.093e-14             4.197e-14               8.882e-15
-3:    2.556e-02        1.821e-14             4.041e-14               2.665e-15
-4:           NA               NA                    NA                      NA
-5:           NA               NA                    NA                      NA
-6:           NA               NA                    NA                      NA
-7:           NA               NA                    NA                      NA
-8:           NA               NA                    NA                      NA
-9:           NA               NA                    NA                      NA
-   corrected_twfe corrected_minus_true corrected_se n_tenure_dropped n_coefs
-1:             NA                   NA           NA               NA      NA
-2:             NA                   NA           NA               NA      NA
-3:             NA                   NA           NA               NA      NA
-4:          0.578             0.009771      0.05056                4      NA
-5:             NA                   NA           NA                4      NA
-6:             NA                   NA           NA               NA      10
-7:             NA                   NA           NA               NA      NA
-8:             NA                   NA           NA               NA      NA
-9:             NA                   NA           NA               NA      NA
-   max_abs_err max_pre_shift n_pre_coefs rank_MX rank_MZ rank_MX_MZ cols_MX_MZ
-1:          NA            NA          NA      NA      NA         NA         NA
-2:          NA            NA          NA      NA      NA         NA         NA
-3:          NA            NA          NA      NA      NA         NA         NA
-4:          NA            NA          NA      NA      NA         NA         NA
-5:          NA            NA          NA      NA      NA         NA         NA
-6:   1.468e-14        0.1833           3      NA      NA         NA         NA
-7:          NA            NA          NA      10      10         10         21
-8:          NA            NA          NA      NA      NA         NA         NA
-9:          NA            NA          NA      NA      NA         NA         NA
-   shift_k_minus5 shift_k_minus4 shift_k_minus3 max_abs_XMZ
-1:             NA             NA             NA          NA
-2:             NA             NA             NA          NA
-3:             NA             NA             NA          NA
-4:             NA             NA             NA          NA
-5:             NA             NA             NA          NA
-6:             NA             NA             NA          NA
-7:             NA             NA             NA          NA
-8:        -0.1419       -0.05444       -0.01424       5.999
-9:             NA             NA             NA          NA
+                   block     tau twfe_true twfe_reported bias_observed bias_formula abs_diff_formula invariance_gap_affine invariance_gap_periodic corrected_twfe corrected_minus_true corrected_se n_tenure_dropped n_coefs max_abs_err max_pre_shift n_pre_coefs rank_MX rank_MZ rank_MX_MZ cols_MX_MZ shift_k_minus5 shift_k_minus4 shift_k_minus3 max_abs_XMZ
+            A_absorption tau_sat    0.5682        0.5937     2.556e-02    2.556e-02        7.140e-15             4.441e-14               5.440e-15             NA                   NA           NA               NA      NA          NA            NA          NA      NA      NA         NA         NA             NA             NA             NA          NA
+            A_absorption tau_lin    0.5682        0.5682     8.771e-15   -2.161e-15        1.093e-14             4.197e-14               8.882e-15             NA                   NA           NA               NA      NA          NA            NA          NA      NA      NA         NA         NA             NA             NA             NA          NA
+            A_absorption tau_mix    0.5682        0.5937     2.556e-02    2.556e-02        1.821e-14             4.041e-14               2.665e-15             NA                   NA           NA               NA      NA          NA            NA          NA      NA      NA         NA         NA             NA             NA             NA          NA
+            B_correction tau_mix    0.5682        0.5937     2.556e-02           NA               NA                    NA                      NA          0.578             0.009771      0.05056                4      NA          NA            NA          NA      NA      NA         NA         NA             NA             NA             NA          NA
+       B_tenure_adoption tau_mix        NA        0.6970            NA           NA               NA                    NA                      NA             NA                   NA           NA                4      NA          NA            NA          NA      NA      NA         NA         NA             NA             NA             NA          NA
+              C_pretrend tau_sat        NA            NA            NA           NA               NA                    NA                      NA             NA                   NA           NA               NA      10   1.468e-14        0.1833           3      NA      NA         NA         NA             NA             NA             NA          NA
+ C2_exact_alignment_rank tau_sat        NA            NA            NA           NA               NA                    NA                      NA             NA                   NA           NA               NA      NA          NA            NA          NA      10      10         10         21             NA             NA             NA          NA
+    C3_partial_alignment tau_sat        NA            NA            NA           NA               NA                    NA                      NA             NA                   NA           NA               NA      NA          NA            NA          NA      NA      NA         NA         NA        -0.1419       -0.05444       -0.01424       5.999
+         D_single_cohort tau_sat    0.4384        0.4384    -1.110e-16           NA               NA                    NA                      NA             NA                   NA           NA               NA      NA          NA            NA          NA      NA      NA         NA         NA             NA             NA             NA          NA
 
 Event-study coefficients (block C):
-     k beta_reported beta_true_outcome predicted_shift observed_shift   abs_err
- 1: -5       0.06846           0.25174        -0.18329       -0.18329 1.468e-14
- 2: -4       0.06059           0.13090        -0.07031       -0.07031 3.497e-15
- 3: -3       0.01389           0.03229        -0.01839       -0.01839 4.087e-15
- 4:  0      -0.27438          -0.26428        -0.01010       -0.01010 3.886e-16
- 5:  1      -0.30606          -0.28033        -0.02573       -0.02573 1.221e-15
- 6:  2      -0.35348          -0.30908        -0.04441       -0.04441 2.498e-15
- 7:  3      -0.46123          -0.39648        -0.06475       -0.06475 7.883e-15
- 8:  4      -0.63776          -0.55174        -0.08601       -0.08601 3.331e-16
- 9:  5      -0.78120          -0.67342        -0.10777       -0.10777 1.110e-16
-10:  6      -0.84880          -0.71899        -0.12981       -0.12981 6.772e-15
+  k beta_reported beta_true_outcome predicted_shift observed_shift   abs_err
+ -5       0.06846           0.25174        -0.18329       -0.18329 1.468e-14
+ -4       0.06059           0.13090        -0.07031       -0.07031 3.497e-15
+ -3       0.01389           0.03229        -0.01839       -0.01839 4.087e-15
+  0      -0.27438          -0.26428        -0.01010       -0.01010 3.886e-16
+  1      -0.30606          -0.28033        -0.02573       -0.02573 1.221e-15
+  2      -0.35348          -0.30908        -0.04441       -0.04441 2.498e-15
+  3      -0.46123          -0.39648        -0.06475       -0.06475 7.883e-15
+  4      -0.63776          -0.55174        -0.08601       -0.08601 3.331e-16
+  5      -0.78120          -0.67342        -0.10777       -0.10777 1.110e-16
+  6      -0.84880          -0.71899        -0.12981       -0.12981 6.772e-15
 
 Monte Carlo by design (block E):
-                 design   B bias_reported rmse_reported cover_reported
-1:             baseline 100       0.02487       0.06652           0.95
-2:    zero_conditioning 100       0.01025       0.06283           0.99
-3: heterogeneous_effect 100       0.01813       0.05903           0.99
-4:      cohort_adoption 100       0.04237       0.07440           0.92
-5:      tenure_adoption 100       0.14880       0.16367           0.46
-   bias_corrected rmse_corrected cover_corrected share_corrected_NA
-1:      0.0023157        0.06343            0.98                  0
-2:      0.0124378        0.06542            0.98                  0
-3:     -0.0062790        0.05778            0.99                  0
-4:     -0.0006699        0.06426            0.98                  0
-5:            NaN            NaN             NaN                  1
-   mcse_reported
-1:      0.006201
-2:      0.006230
-3:      0.005646
-4:      0.006147
-5:      0.006852
+               design   B bias_reported rmse_reported cover_reported bias_corrected rmse_corrected cover_corrected share_corrected_NA mcse_reported
+             baseline 100       0.02487       0.06652           0.95      0.0023157        0.06343            0.98                  0      0.006201
+    zero_conditioning 100       0.01025       0.06283           0.99      0.0124378        0.06542            0.98                  0      0.006230
+ heterogeneous_effect 100       0.01813       0.05903           0.99     -0.0062790        0.05778            0.99                  0      0.005646
+      cohort_adoption 100       0.04237       0.07440           0.92     -0.0006699        0.06426            0.98                  0      0.006147
+      tenure_adoption 100       0.14880       0.16367           0.46             NA             NA              NA                  1      0.006852
