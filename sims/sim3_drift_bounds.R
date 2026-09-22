@@ -1,5 +1,15 @@
 # ============================================================
-# T1 sim3 (v3, 2026-09-20 evening): Proposition 3 (bounded cohort drift) — bounds validity & coverage
+# T1 sim3 (v4, 2026-09-21): Proposition 3 (bounded cohort drift) — bounds validity & coverage
+# v4: a third DGP (G4) with EQUAL true drifts (+M0, +M0). In G3 the two endpoints of the identified set for m
+#     coincide at M = M0 but each is a min or max over DISTINCT values (a smooth function of the cell means);
+#     G4 makes the max over cohort drifts a TIE, the non-smooth case, while the set for m stays an interval of
+#     width 2*M0 - (max d - min d) = 2*M0 = .050 at M = M0 (truth at its upper endpoint; v0.8's header
+#     wrote M0 in error). Neither DGP satisfies Imbens–Manski (2004) Assumption 1(iii) at a point-identified
+#     parameter: the raw set width (s-1)(2M - |d_hat_1 - d_hat_2|) is continuously distributed, so the published
+#     uniform-coverage lemma does not apply to the adaptive critical value as used here; the coverage numbers are
+#     a finite-sample experiment, not a validity proof. Interval convention: the critical value c is computed
+#     from the width TRUNCATED at zero; the interval itself is [lo - c*se_lo, hi + c*se_hi] with the RAW endpoints,
+#     which may cross (an empty estimated set) — 'empty_rate' records how often.
 # v3: the interval uses the Imbens–Manski (2004) critical value c solving
 #     Phi(c + Delta_hat/sigma_hat) - Phi(-c) = 1 - alpha (c -> 1.645 for a wide set, c -> 1.96 at a point), instead of a
 #     fixed z = 1.645; coverage with the fixed z is reported alongside for comparison. A second DGP (G3) with true
@@ -23,7 +33,7 @@ Tmax <- 19
 n_cell <- 500             # respondents per cohort-wave cell
 sdy <- 1
 tau_true <- function(s) 0.25 * (1 - exp(-(s - 1) / 2))    # saturating, tau(1)=0
-G_SETS <- list(G2 = c(0, 0.10, 0.22), G3 = c(0, 0.10, -0.10))   # G2: drifts (.025,.015); G3: drifts (+.025,-.025), tied at M0
+G_SETS <- list(G2 = c(0, 0.10, 0.22), G3 = c(0, 0.10, -0.10), G4 = c(0, 0.10, 0.30))   # drifts: G2 (.025,.015); G3 (+.025,-.025) coincident endpoints at M0; G4 (+.025,+.025) tied max
 g_true <- G_SETS$G2                                        # g(e), g(1)=0 (population check uses G2)
 alpha_true <- function(t) 0.05 * sin(t)
 d_true <- diff(g_true) / diff(E)                          # per-period drifts .025, .015

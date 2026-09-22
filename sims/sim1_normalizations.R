@@ -5,7 +5,7 @@
 #   rho 4-periodic with rho(1) = 0. Consequences tested here:
 #   (A) NOISELESS IDENTITY TESTS: adding the periodic null direction leaves every cell mean unchanged,
 #       moves the ordinary second difference D2 tau(3) (NOT identified when d > 1), and leaves the
-#       lag-d second difference D4^2 tau(1) = tau(9) - 2 tau(5) + tau(1) unchanged (identified).
+#       centred lag-4 second difference D4^2 tau(5) = tau(9) - 2 tau(5) + tau(1) unchanged (identified).
 #   (B) MONTE CARLO: level estimates depend on the normalization; the lag-d curvature estimated by an
 #       explicit contrast is unbiased; the plateau *observable implications* test (cohort-gap constancy
 #       within the plateau window) has correct size, no power against pure linear drift (Theorem 1),
@@ -38,12 +38,12 @@ D2 <- function(tau, s) tau[s + 1] - 2 * tau[s] + tau[s - 1]                     
 D2d <- function(tau, s) tau[s + 2 * dgcd] - 2 * tau[s + dgcd] + tau[s]            # lag-d second difference at s
 cat(sprintf("  ordinary D2 tau(3):     before %+.4f  after %+.4f  -> moves by %+.4f (NOT identified)\n",
             D2(tau0, 3), D2(tau0 + rho(1:TT), 3), D2(tau0 + rho(1:TT), 3) - D2(tau0, 3)))
-cat(sprintf("  lag-4 D4^2 tau(1):      before %+.4f  after %+.4f  -> moves by %+.1e (identified)\n",
+cat(sprintf("  lag-4 D4^2 tau(5):      before %+.4f  after %+.4f  -> moves by %+.1e (identified)\n",
             D2d(tau0, 1), D2d(tau0 + rho(1:TT), 1), D2d(tau0 + rho(1:TT), 1) - D2d(tau0, 1)))
 ## explicit-contrast estimator of the lag-d second difference from cell means, cancelling alpha and g:
-## D(t) := mu(1,t) - mu(2,t) = tau(t) - tau(t-4) + g(1) - g(2)  for t >= 5;  D(t+4) - D(t) = tau(t+4) - 2 tau(t) + tau(t-4) = D4^2 tau(t-4)
+## D(t) := mu(1,t) - mu(2,t) = tau(t) - tau(t-4) + g(1) - g(2)  for t >= 5;  D(t+4) - D(t) = tau(t+4) - 2 tau(t) + tau(t-4) = D4^2 tau(t), centred at t (v0.9 labels; earlier versions wrote D4^2 tau(t-4))
 contrast_D4 <- function(df, s) { t <- s + dgcd; (get_mu(df, 1, t + dgcd) - get_mu(df, 2, t + dgcd)) - (get_mu(df, 1, t) - get_mu(df, 2, t)) }
-cat(sprintf("  explicit contrast for D4^2 tau(1) from noiseless cells: %+.4f  (truth %+.4f, diff %.1e)\n",
+cat(sprintf("  explicit contrast for D4^2 tau(5) = tau(9)-2tau(5)+tau(1) from noiseless cells: %+.4f  (truth %+.4f, diff %.1e)\n",
             contrast_D4(cbind(cells, mu = mu0), 1), D2d(tau0, 1), contrast_D4(cbind(cells, mu = mu0), 1) - D2d(tau0, 1)))
 cat(sprintf("  same contrast after adding the periodic direction:       %+.4f  (diff %.1e)\n\n",
             contrast_D4(cbind(cells, mu = mu1), 1), contrast_D4(cbind(cells, mu = mu1), 1) - D2d(tau0, 1)))

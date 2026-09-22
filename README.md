@@ -13,7 +13,7 @@ release-check records (`RELEASE_CHECK*`), which are written after the manifest.
 
 ## Checked commit and release record
 Computational commit checked against the manuscript: `a48bd805f765ac4fa8fd282437affedf2af57e31` — see `RELEASE_CHECK.md` (with `RELEASE_CHECK_run.log` and `RELEASE_CHECK_sessionInfo.txt` when a clean-copy run was made). Later commits change documentation and the release record only — `git diff --stat a48bd805f765ac4fa8fd282437affedf2af57e31 HEAD` lists them — so the scripts and outputs are those of the checked commit; after any change to code or outputs the release check is rerun and this line is regenerated.
-Tag matching this version of the manuscript: `paper-v0.7`. Tag matching the posted preprint version: to be added at posting (`arxiv-<id>v<n>`).
+Tag matching this version of the manuscript: `paper-v0.9`. Tag matching the posted preprint version: to be added at posting (`arxiv-<id>v<n>`).
 Third-party reproduction: none. The release record is the author's own re-execution of the published snapshot in a clean copy.
 
 ## Data
@@ -31,18 +31,28 @@ No data are distributed with this archive and none are needed. Every number in t
 |---|---|---|---|---|
 | 1 | `sims/sim1_normalizations.R` | `sim1_results.csv` | ~1 min | Appendix A.1 (table; noiseless identities) |
 | 2 | `sims/sim2_direct_contrast.R` | `sim2_results.csv` | ~1 min | Appendix A.2 |
-| 3 | `sims/sim3_drift_bounds.R` (v3) | `sim3_results.csv` | ~12 min | Appendix A.3 (both DGPs; IM and fixed-z coverage) |
+| 3 | `sims/sim3_drift_bounds.R` (v4) | `sim3_results.csv` | ~18 min | Appendix A.3 (three DGPs G2, G3, G4; adaptive and fixed-z coverage) |
 | 4 | `sims/sim4_downstream.R` (v3) | `sim4_results.csv`, `sim4_pretrend_coefs.csv`, `sim4_mc.csv`, `sim4_manuscript_values.csv`, `sim4_results.txt` | ~30 min | Appendix C (identities, alignment checks, Monte Carlo table) |
-| 5 | `sims/check_manuscript_values.R` | console | seconds | prints every number quoted in Appendices A and C from named columns |
+| 5 | `sims/check_manuscript_values.R` | console; exit status | seconds | **asserts** every number quoted in Appendices A and C against its named output column (71 assertions, including key uniqueness and row counts); each selector must return exactly one row, each vector must have its expected length and only finite values, and floating-point identities are asserted at the scale-aware tolerance 1e-10; exits 1 on any failure |
+| 5b | `sims/check_manuscript_values.R --selftest` | console; exit status | seconds | negative controls: perturbed copies of the outputs (deleted row, duplicated row, altered value, non-finite value, deleted quantity, identity residual 1e-6) must each make the checker fail, and an unmodified copy and a residual of 5e-11 must pass |
 | 6 | `sims/design_rank.R` | console | seconds | Theorem 1(d), Lemma 1(o) examples; the {1,4,8} design |
 | 7 | `sims/check_thm1_support.py` | console | seconds | nullity = gcd on 14 C_d designs |
 | 8 | `sims/check_lemma1_trapezoid.py` | console | ~10 s | Lemma 1 sweep (1,547 exact three-cohort designs; 9,401 designs for the bound) |
 | 9 | `sims/check_lemma1_components.py` | console | ~10 s | Lemma 1(o) and (iv): exact rank for five named designs, then a sweep of 10,934 trapezoids |
-| 10 | `sims/check_interrupted.py` | console | ~5 s | Theorem 2, Corollary 2, Table 1 (dose designs); Lemma 1(iv) sweep (10,934 designs); Proposition 5's weights; §8.1's Table 2 from published CPS indices (Appendix D) |
+| 10 | `sims/check_interrupted.py` | console | ~5 s | Theorem 2(a),(d), Table 1 (dose designs); Lemma 1(iv) sweep (10,934 designs; the 72 failures reported there are of the withdrawn third-cohort conjecture, not of the lemma); Proposition 5's weights and the constant-curvature equality test; §8.1's descriptive Table 2 (Appendix D) |
+| 11 | `sims/check_dose_sharpness.py` | console | ~10 s | Theorem 2(b): the earlier counterexample (cohorts {1,2,4}, offsets {0,1,3}) and condition (P') verified by exact arithmetic over 496 designs; the CPS ten-cohort threshold; the two d > 1 examples cited in §3.4 (Appendix D) |
+| 12 | `sims/check_recovery_support.py` | console; exit status | ~15 s | exact arithmetic: the six-cell disconnected support (C_1 holds, full nullity 3, projected nullity 1, tau(2) free with g known) and the identity dim K = dim K_tau + (c-1) on 9,183 supports (Theorem 1(d), condition (CG) of §5); the post-event-reference example for Theorem 5's premise (rank 16, pre-coefficient +1/2); the failure of (R) under D = 1{s>=4} with two exact fits; Corollary 1 at d = 2; the plateau boundary; the population widths of G4; the uninterrupted rows of Table 1 (Appendix D) |
 
-Seeds are fixed inside each script (sim1–2: as in file; sim3: 20260830; sim4: 20260916). Scripts are run from `sims/` and write into it. The whole sequence takes about 45 minutes, of which Simulation 4's Monte Carlo (five designs, B = 100) is 30 and Simulation 3 is 12; steps 5–10 together take well under a minute. Steps 6–10 are deterministic — exact rational or integer arithmetic, no randomness and no data — so they either reproduce exactly or fail.
+Seeds are fixed inside each script (sim1–2: as in file; sim3: 20260830; sim4: 20260916). Scripts are run from `sims/` and write into it. The whole sequence takes about 50 minutes, of which Simulation 4's Monte Carlo (five designs, B = 100) is 30 and Simulation 3 is 18; steps 5–12 together take about a minute. Steps 6–12 are deterministic — no randomness and no data — so they either reproduce exactly or fail. Steps 11 and 12, the named designs of step 9, and blocks (A) and (D') of step 10 use exact rational arithmetic; steps 6, 7, 8 and the two 10,934-design sweeps (steps 9 and 10) use floating-point rank (numpy SVD at tolerance 1e-10, R's `qr`), which for these small 0–1 matrices returns the same integers as the exact code on every named design.
 
 ## How to read the release check
+
+The release script (`release_check.sh` in the author's workflow, whose record is `RELEASE_CHECK.md`) exits with a
+nonzero status — and says so in its last line — if any step of the sequence fails, if any file listed in
+`FILE_MANIFEST.txt` is missing from the anonymous download or any unlisted file is present, if any restricted-data
+or review-material pattern matches, or if any regenerated numeric value differs from the shipped one by more than
+`TOL` (default 1e-8). A tag is placed only on a snapshot whose check passed.
+
 
 `RELEASE_CHECK.md` records a re-execution of the documented sequence in a clean copy of the published
 snapshot, downloaded anonymously, with the shipped outputs set aside and the regenerated ones compared
@@ -53,8 +63,8 @@ token by token. Two kinds of difference are expected and are not errors.
 1e-13 in regression coefficients and simulation summaries follow from that and from nothing else. The
 deterministic identities the paper relies on are all checked *inside* the scripts against their own
 analytic formulas, to tolerances stated in Appendix C, so a platform difference of this size cannot
-disturb any claim; `sims/check_manuscript_values.R` reprints every number quoted in Appendices A and C
-from its named output column.
+disturb any claim; `sims/check_manuscript_values.R` asserts every number quoted in Appendices A and C
+from its named output column, at a scale-aware tolerance of 1e-10 for the floating-point identities (the archived residuals of order 1e-14 to 1e-16 are platform-specific and are not themselves required to recur).
 
 *Print format.* `sim4_results.txt` is a transcript of console output produced with `sink()`. `data.table`
 version 1.15 and later print a type-annotation row (`<char>`, `<num>`, `<int>`) beneath each table
@@ -62,21 +72,23 @@ header; 1.14, under which the shipped transcript was written, does not. The chec
 therefore reported this one file as differing in token count. The comparator now drops those rows before
 comparing, so later runs classify the file with the others; the numbers in it were unaffected.
 
-The deterministic checks — steps 6 to 10 — carry no such caveat. They use exact rational or integer
-arithmetic and no randomness, so they either reproduce exactly or fail. In the 21 September 2026 check
+The deterministic checks — steps 6 to 12 — carry no such caveat. They use no randomness, so they either
+reproduce exactly or fail. In the 21 September 2026 check
 they reproduced exactly, including Lemma 1's sweep over 10,934 designs (no violation of either part; the
 bound strict in 1,188 of them) and every entry of Table 2, on a different operating system, a different
 R, a different Python and a different `numpy` from those used to write the paper.
 
 ## Map from manuscript objects to code
 
-- Theorem 1(a)–(d), Corollary 1: `design_rank.R` (`design_rank()`, `increment_graph()`, `is_identified()`), `check_thm1_support.py`.
-- Theorem 2, Corollary 2, Table 1 (interrupted participation / dose designs) and Proposition 5's sensitivity weights: `check_interrupted.py`.
+- Theorem 1(a)–(d), Corollary 1: `design_rank.R` (`design_rank()`, `increment_graph()`, `is_identified()`), `check_thm1_support.py`; Theorem 1(d)'s full-kernel/projection identity, condition (CG) of §5 and the six-cell example, Corollary 1 at d = 2, Proposition 1's plateau boundary: `check_recovery_support.py`.
+- Theorem 2(a),(d), Corollary 2, Table 1 (interrupted participation / dose designs) and Proposition 5's sensitivity weights and equality test: `check_interrupted.py`.
+- Theorem 2(b), condition (P'), the counterexample to the earlier statement, and the d > 1 examples of §3.4: `check_dose_sharpness.py`.
 - Lemma 1 (o)–(iv): `check_lemma1_components.py`, `check_lemma1_trapezoid.py`, `check_interrupted.py`, `design_rank.R`.
 - Proposition 1 (plateau test), normalizations: `sim1_normalizations.R`.
 - Corollary 1 readouts: `sim2_direct_contrast.R`.
 - Proposition 3 (drift bounds, IM intervals): `sim3_drift_bounds.R`.
-- Theorem 3 (absorption, kernel invariance), Theorem 4 (joint regression, (R)), Theorem 5 (pre-trend identity, rank-deficient design, exact-alignment rank), Proposition 4 (partial-alignment counterexample), Corollary 3(a): `sim4_downstream.R`.
+- Theorem 3 (absorption, kernel invariance), Theorem 4 (joint regression, (R)), Theorem 5 (pre-trend identity, rank-deficient design, exact-alignment rank), Proposition 4 (partial-alignment counterexample), Corollary 3(a): `sim4_downstream.R`; Theorem 4's aliasing caveat and Theorem 5's reference-category premise (exact examples): `check_recovery_support.py`.
+- Simulation 3's population widths (G2, G3, G4): `check_manuscript_values.R` and `check_recovery_support.py` (E).
 
 ## Manuscript
 

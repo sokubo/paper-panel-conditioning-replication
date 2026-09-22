@@ -1,10 +1,24 @@
-"""T1 v0.6 — interrupted participation (dose designs) and the Lemma-1 upper bound for K >= 4.
+"""T1 v0.8 — interrupted participation (dose designs) and the Lemma-1 upper bound for K >= 4.
 Exact rational ranks; no data, no network.  Run: python3 check_interrupted.py
 (A) For a common interview pattern J (offsets from entry) the cell design is mu(e, e+j) = alpha(e+j) + g(e) + tau(k),
-    k = the index of j in J (the DOSE).  Claim: the kernel's tau-part is spanned by j(k) — the elapsed calendar time
-    of the k-th interview — and by d-periodic functions of j(k); with uninterrupted participation j(k) = k - 1 and we
-    recover the affine direction.  Consequence: a dose-linear path is NOT in the kernel iff participation is interrupted.
-(B) Lemma 1 upper bound for K >= 4: nu <= max(d, Delta_2 - (T - e_3)), the follow-up of the THIRD cohort.
+    k = the index of j in J (the DOSE).  Theorem 2(a): m*j(k) + rho(j(k)) is always in the kernel's tau-part.
+    Theorem 2(b) (v0.8): under CONTINUOUS RECRUITMENT (P') — cohorts at every multiple of d over a window of length
+    >= the largest within-class gap of J, all scheduled cells observed, d a spacing of J — nothing else is.  The v0.7
+    condition (P) (every spacing realized by some pair) was NOT sufficient: E={1,2,4}, J={0,1,3}, T=7 has a
+    two-dimensional tau-kernel.  check_dose_sharpness.py verifies the counterexample and (P') across 500 designs.
+    Consequence (Theorem 2(d)): a dose-linear path is NOT in the kernel iff participation is interrupted.
+(B) Lemma 1(iv): nu <= max(d, Delta_2 - (T - e_K)), the follow-up of the LAST cohort — 0 violations.  The sweep also
+    reports the WITHDRAWN v0.6 conjecture with the THIRD cohort's follow-up, which fails in 72 designs; those are
+    failures of the withdrawn bound, not of the lemma.
+(E) Section 8.1: per-month changes of published CPS month-in-sample indices.  This is a DESCRIPTIVE transformation
+    of published averages, NOT an estimate of conditioning and NOT an identified contrast: a month-in-sample mean at
+    period t is alpha(t) + g(t - j_k) + tau(k), so the profile retains the cohort effects g at eight entry dates, and
+    the weights of D annihilate only an affine g (Corollary 2(ii): a quadratic g contributes 126a at every period).
+    Identified contrasts of tau exist only on the joint cohort-by-period array under (P'), which agencies do not
+    publish.  The two restricted patterns printed are descriptive comparisons by inspection; nothing here is a test.
+Arithmetic: blocks (A) and (D') use exact rational arithmetic (fractions.Fraction); block (B)'s 10,934-design sweep
+    uses numpy's floating-point rank (the named designs it quotes are reproduced exactly by check_lemma1_components.py
+    and check_recovery_support.py); block (E) is plain floating-point arithmetic on published numbers.
 """
 from fractions import Fraction as F
 from math import gcd
@@ -97,7 +111,7 @@ print()
 out['lfs_6'] = analyse("6-wave rotation, 1 on 1 off (alternating months)", list(range(1, 25)), [0, 2, 4, 6, 8, 10], 45)
 
 print()
-print("=" * 100); print("(B) Lemma 1 upper bound for K >= 4:  nu <= max(d, Delta_2 - (T - e_3))\n")
+print("=" * 100); print("(B) Lemma 1(iv):  nu <= max(d, Delta_2 - (T - e_K))  [last cohort; the lemma]   vs the WITHDRAWN third-cohort conjecture\n")
 import numpy as np
 def trap_nullity(E, T):
     cells = [(e, t) for e in E for t in range(e, T + 1)]
@@ -117,13 +131,14 @@ for K in range(3, 6):
         for T in range(E[-1], E[-1] + 14):
             nu = trap_nullity(list(E), T)
             d = reduce(gcd, [e - E[0] for e in E[1:]]); D2 = E[1] - E[0]
-            b_new = max(d, D2 - (T - E[2]))          # follow-up of the THIRD cohort
-            b_old = max(d, D2 - (T - E[-1]))         # follow-up of the LAST cohort
+            b_new = max(d, D2 - (T - E[2]))          # WITHDRAWN v0.6 conjecture: follow-up of the THIRD cohort
+            b_old = max(d, D2 - (T - E[-1]))         # Lemma 1(iv): follow-up of the LAST cohort
             n += 1
-            if nu > b_new: viol_new += 1; print("VIOLATION(new)", E, T, nu, b_new)
+            if nu > b_new: viol_new += 1   # a failure of the withdrawn third-cohort conjecture (expected; 72 of them)
             if nu > b_old: viol_old += 1
             if nu < b_new: strict += 1
-print(f"designs: {n}; violations of nu <= max(d, D2 - (T - e_3)): {viol_new}; of the last-cohort version: {viol_old}; strict: {strict}")
+print(f"designs: {n}; violations of Lemma 1(iv) [last cohort]: {viol_old}   <- must be 0")
+print(f"failures of the WITHDRAWN third-cohort conjecture: {viol_new} (expected 72; not a property of the lemma); designs where the withdrawn bound is strict: {strict}")
 for E, T in [((1, 5, 9, 13), 15), ((1, 3, 7, 11), 12), ((1, 6, 7, 12), 13)]:
     d = reduce(gcd, [e - E[0] for e in E[1:]]); D2 = E[1] - E[0]
     print(f"  E={E} T={T}: nu={trap_nullity(list(E), T)}  bound_e3={max(d, D2 - (T - E[2]))}  bound_eK={max(d, D2 - (T - E[-1]))}  d={d}")
@@ -181,12 +196,39 @@ for k, (c, tot) in res.items():
     actual = tau(k + 6) - (tau(-1 + 6) + (k + 1) * (tau(-2 + 6) - tau(-1 + 6)) / (-2 + 1))
     print(f"   k={k:+d}: |shift| = {abs(actual):.4f}  <=  C * sum|w| = {C * float(tot):.4f}   (ratio {abs(actual) / (C * float(tot)):.2f})")
 
+# --- (D') equality test of Proposition 5's bound (round 3, M2): constant curvature +C or -C attains it; alternating
+#      curvature does not.  Shift(k) = f(k) - L[f](k) with adjacent references k0=-1, k1=-2 and window k in [-5, 6].
+def shift_of(f, k, k0=-1, k1=-2):
+    return f(k) - (f(k0) + (k - k0) * (f(k1) - f(k0)) / (k1 - k0))
+Cc = 0.06
+quad = lambda x: 0.5 * Cc * x * x                       # centered second difference == +Cc everywhere
+altf = {}
+def alt(x):                                             # centered second difference alternating +Cc, -Cc
+    if x in altf: return altf[x]
+    v = 0.0; d = 0.0
+    for y in range(-8, x):                              # build from the left by integrating an alternating curvature
+        d += Cc * (1 if (y % 2 == 0) else -1); v += d
+    altf[x] = v; return v
+print("\n   (D') Proposition 5 equality test at C = .06 (bound = C * m_k(m_k+1)/2):")
+ok_all = True
+for k in [-5, -4, -3, 0, 3, 6]:
+    mk = (k - (-1)) if k > -1 else ((-2) - k)
+    bound = Cc * mk * (mk + 1) / 2
+    s_quad = abs(shift_of(quad, k)); s_alt = abs(shift_of(alt, k))
+    attained = abs(s_quad - bound) < 1e-12; below = s_alt <= bound + 1e-12
+    ok_all &= attained and below
+    print(f"   k={k:+d}: bound {bound:.4f}   constant +C: |shift| {s_quad:.4f} (equal: {attained})   alternating: |shift| {s_alt:.4f} (<= bound: {below})")
+assert ok_all, "Proposition 5 attainment test failed"
+print("   constant curvature attains the bound at every k; alternating curvature stays below it")
+
 print()
-print("=" * 100); print("(E) published CPS month-in-sample indices: the identified per-month rate profile\n")
+print("=" * 100); print("(E) published CPS month-in-sample indices: a DESCRIPTIVE per-month profile (Section 8.1; not an estimate of conditioning)\n")
 import math
 J_CPS = [0, 1, 2, 3, 12, 13, 14, 15]
 def rate_profile(name, vals, log=True, unit=""):
-    """vals = MIS 1..8 published index/level. Identified object: the per-month rates, up to a common constant."""
+    """vals = MIS 1..8 published index/level.  Output: the per-month changes of the published index and the contrast D
+    formed with the weights of Corollary 2 -- a transformation of published averages that retains any non-affine
+    cohort effect.  Nothing printed here is an identified functional of tau."""
     y = [math.log(v) for v in vals] if log else list(vals)
     r = [(y[k + 1] - y[k]) / (J_CPS[k + 1] - J_CPS[k]) for k in range(7)]
     mean_r = sum(r) / 7
@@ -195,9 +237,9 @@ def rate_profile(name, vals, log=True, unit=""):
     print(f"   {name} ({'log ' if log else ''}{unit})")
     print(f"      MIS values      : {[round(v, 4) for v in vals]}")
     print(f"      per-month rates : {[round(x, 4) for x in r]}   (interval 4->5 spans 9 months)")
-    print(f"      rates, demeaned : {[round(x, 4) for x in dev]}   <- identified up to nothing further")
+    print(f"      rates, demeaned : {[round(x, 4) for x in dev]}   (descriptive; retains cohort effects)")
     print(f"      gap rate minus the largest in-block rate: {round(r[3] - max(r[:3] + r[4:]), 4)}")
-    print(f"      D = [tau(5)-tau(4)] - 9[tau(2)-tau(1)] = {round(D, 4)}   (0 under a calendar-time clock; -8c under a dose clock)")
+    print(f"      D-weighted contrast of the published index = {round(D, 4)}   (a constant per-month PATTERN gives 0, a constant per-interview PATTERN gives -8c; descriptive comparison only)")
     return r, D
 # McIllece (2022), Table 2: average multiplicative bias by MIS, Jan 2003 - Jun 2022, relative to second-stage estimates
 rate_profile("McIllece 2022 Tab. 2, unemployed", [1.113, 1.053, 1.014, 0.989, 1.000, 0.955, 0.939, 0.938], unit="multiplicative bias")
@@ -208,5 +250,7 @@ rate_profile("Bailar 1975 Tab. 1 (1970-72), hours worked 35-40", [93.1, 97.7, 99
 rate_profile("Bailar 1975 Tab. 1 (1968-69), unemployed [MIS 1,5 carried extra questions]", [120.0, 101.5, 96.4, 92.8, 109.3, 96.5, 92.6, 91.0], unit="index")
 # Solon (1986), Table 1: average ratio-estimate contributions by rotation group, Jan 1974 - Jun 1983 (thousands)
 rate_profile("Solon 1986 Tab. 1, unemployed (thousands) [MIS 4,8 carried extra questions]", [1028, 952, 939, 964, 958, 913, 900, 941], log=False, unit="thousands")
-print("\n   Under the calendar clock every rate is the same; under a dose clock the three in-block rates within a wave")
-print("   are equal and the 4->5 rate is one ninth of them.  Both are testable from published tables alone.")
+print("\n   Restricted descriptive patterns for comparison by inspection: under a constant change per calendar month every")
+print("   rate is the same; under a constant change per interview the six in-block rates are equal and the 4->5 rate is")
+print("   one ninth of them.  The published tables carry no covariances and retain the cohort effects, so neither pattern")
+print("   is tested here and neither profile is an estimate of conditioning (Section 8.1).")

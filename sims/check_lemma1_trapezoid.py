@@ -3,7 +3,7 @@ Run: python3 sims/check_lemma1_trapezoid.py   (needs check_thm1_support.py in th
 import numpy as np, itertools, sys
 from math import gcd
 from functools import reduce
-sys.path.insert(0,'/home/claude/work/papers/T1_impossibility_absorption/sims')
+import os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))   # check_thm1_support.py lives beside this file
 from check_thm1_support import identified_set
 def nullity(entries, T): return identified_set(entries, T)[0].shape[0]
 def D(entries): return reduce(gcd, [abs(a-b) for a in entries for b in entries if a!=b])

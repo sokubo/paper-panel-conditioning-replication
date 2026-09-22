@@ -22,8 +22,8 @@ LTX  = os.path.join(HERE, 'latex')
 # COMMIT7 is a deliberate placeholder that make_arxiv_zips.sh refuses to submit,
 # so the paper can never go out naming a commit that does not exist.
 ARCHIVE_REPO   = "https://github.com/sokubo/paper-panel-conditioning-replication"
-ARCHIVE_TAG    = "paper-v0.7"
-ARCHIVE_COMMIT = "a48bd80"
+ARCHIVE_TAG    = "paper-v0.9"
+ARCHIVE_COMMIT = "COMMIT7"
 
 TITLE_THANKS = (
     r"\thanks{Code reproducing every numerical result in this paper, including the "
@@ -36,10 +36,26 @@ AUTHOR_THANKS = (
     r"\thanks{Department of Sociology, Toyo University, Tokyo, Japan. "
     r"Email: okubo080@toyo.jp. Website: sokubo.github.io.}"
 )
-DATE = 'September 21, 2026'
+DATE = 'September 22, 2026'
 KEYWORDS = (r"\noindent\textbf{Keywords:} panel conditioning; identification; "
             r"age-period-cohort; two-way fixed effects; event study; refreshment samples")
 # -----------------------------------------------------------------------------
+
+# Refuse to build a submission PDF that names a commit which does not exist. A draft build for internal
+# reading is allowed with ALLOW_PLACEHOLDER=1, and is stamped DRAFT on the title page so it cannot be
+# mistaken for a release build (the build rejects placeholder identifiers).
+DRAFT = False
+if re.fullmatch(r'COMMIT[0-9]*', ARCHIVE_COMMIT) or not re.fullmatch(r'[0-9a-f]{7,40}', ARCHIVE_COMMIT):
+    if os.environ.get('ALLOW_PLACEHOLDER') == '1':
+        DRAFT = True
+        print('WARNING: ARCHIVE_COMMIT is the placeholder %r; building a DRAFT (not for submission)' % ARCHIVE_COMMIT)
+    else:
+        sys.exit('ARCHIVE_COMMIT is the placeholder %r: publish the archive, set the checked commit here and in '
+                 'main.qmd (Data and code availability), then rebuild. For an internal draft: ALLOW_PLACEHOLDER=1 python3 build_latex.py'
+                 % ARCHIVE_COMMIT)
+qmd = open(os.path.join(HERE, 'main.qmd')).read()
+if not DRAFT and re.search(r'`COMMIT[0-9]*`', qmd):
+    sys.exit('main.qmd still contains a COMMIT placeholder in the Data and code availability section')
 
 subprocess.run(['quarto', 'render', 'main.qmd', '--to', 'pdf'], cwd=HERE, check=True)
 
@@ -72,8 +88,8 @@ tex = tex[:m.end()-1] + AUTHOR_THANKS + tex[m.end()-1:]
 if r'\textbf{Keywords:}' not in tex:
     tex = tex.replace(r'\end{abstract}', '\\end{abstract}\n\n' + KEYWORDS + '\n', 1)
 
-# date, spelled out as in the house format
-tex = re.sub(r'\\date\{[^}]*\}', r'\\date{' + DATE + '}', tex, count=1)
+# date, spelled out as in the house format (a draft build is stamped as such)
+tex = re.sub(r'\\date\{[^}]*\}', r'\\date{' + DATE + (r' --- DRAFT BUILD, archive commit not yet fixed' if DRAFT else '') + '}', tex, count=1)
 
 os.makedirs(LTX, exist_ok=True)
 open(os.path.join(LTX, 'main.tex'), 'w').write(tex)

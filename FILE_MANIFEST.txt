@@ -8,10 +8,12 @@ manuscript/main.pdf
 manuscript/main.qmd
 manuscript/references.bib
 README.md
+sims/check_dose_sharpness.py
 sims/check_interrupted.py
 sims/check_lemma1_components.py
 sims/check_lemma1_trapezoid.py
 sims/check_manuscript_values.R
+sims/check_recovery_support.py
 sims/check_thm1_support.py
 sims/design_rank.R
 sims/sim1_normalizations.R

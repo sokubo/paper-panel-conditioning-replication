@@ -15,7 +15,7 @@
 #     - a test of whether a given linear functional lambda'tau is identified (orthogonal to the null space)
 #   Usage:  source("sims/design_rank.R"); r <- design_rank(c(1, 5, 13), 19); r$summary
 #           is_identified(r, lambda = c(1, -2, 1, rep(0, 16)))          # ordinary D2 tau(2): FALSE when d = 4
-#           is_identified(r, lambda = replace(numeric(19), c(1, 5, 9), c(1, -2, 1)))  # lag-4 D4^2 tau(1): TRUE
+#           is_identified(r, lambda = replace(numeric(19), c(1, 5, 9), c(1, -2, 1)))  # centred lag-4 D4^2 tau(5) = tau(9)-2tau(5)+tau(1): TRUE
 # ============================================================
 design_rank <- function(entries, Tmax = NULL, cells = NULL, tol = 1e-9) {
   if (is.null(cells)) {
@@ -71,9 +71,9 @@ is_identified <- function(dr, lambda, tol = 1e-8) {
 if (sys.nframe() == 0) {
   r <- design_rank(c(1, 5, 13), 19); print(r)
   lam_d2 <- numeric(19); lam_d2[c(2, 3, 4)] <- c(1, -2, 1)          # ordinary second difference at s = 3
-  lam_d4 <- numeric(19); lam_d4[c(1, 5, 9)] <- c(1, -2, 1)          # lag-4 second difference at s = 1
+  lam_d4 <- numeric(19); lam_d4[c(1, 5, 9)] <- c(1, -2, 1)          # centred lag-4 second difference D4^2 tau(5) = tau(9) - 2 tau(5) + tau(1)
   lam_th <- numeric(19); lam_th[c(1, 2, 3)] <- c(1, -2, 1); lam_th[c(5, 6, 7)] <- lam_th[c(5, 6, 7)] - c(1, -2, 1)  # D2 tau(2) - D2 tau(6)
-  cat("identified?  D2 tau(3):", is_identified(r, lam_d2), " | D4^2 tau(1):", is_identified(r, lam_d4), " | D2tau(2)-D2tau(6):", is_identified(r, lam_th), "\n")
+  cat("identified?  D2 tau(3):", is_identified(r, lam_d2), " | D4^2 tau(5):", is_identified(r, lam_d4), " | D2tau(2)-D2tau(6):", is_identified(r, lam_th), "\n")
   for (E in list(c(1, 2, 3), c(1, 3, 5), c(1, 7, 10), c(1, 6, 9), c(1, 4, 8), c(1, 6, 13))) for (Tm in c(max(E), max(E) + 3, max(E) + 8)) {
     rr <- design_rank(E, Tm)$summary
     cat(sprintf("entries %-12s T=%2d: nullity=%d d=%d components=%d C_d=%s lemma1=%s three-cohort formula=%s\n", paste(E, collapse = ","), Tm,
