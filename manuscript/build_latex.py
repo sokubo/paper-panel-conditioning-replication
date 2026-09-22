@@ -23,7 +23,7 @@ LTX  = os.path.join(HERE, 'latex')
 # so the paper can never go out naming a commit that does not exist.
 ARCHIVE_REPO   = "https://github.com/sokubo/paper-panel-conditioning-replication"
 ARCHIVE_TAG    = "paper-v0.9"
-ARCHIVE_COMMIT = "a3b3652"
+ARCHIVE_COMMIT = "ea044e6"
 
 TITLE_THANKS = (
     r"\thanks{Code reproducing every numerical result in this paper, including the "
