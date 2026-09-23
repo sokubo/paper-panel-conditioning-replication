@@ -1,0 +1,672 @@
+== sims/Rscript sim1_normalizations.R 18:31:58
+== (A) noiseless identity tests (d = 4) ==
+  max |cell mean change| under tau -> tau + rho(s), alpha -> alpha - rho(t):  5.55e-17  (must be 0)
+  ordinary D2 tau(3):     before -0.0223  after +0.6777  -> moves by +0.7000 (NOT identified)
+  lag-4 D4^2 tau(5):      before -0.1654  after -0.1654  -> moves by +0.0e+00 (identified)
+  explicit contrast for D4^2 tau(5) = tau(9)-2tau(5)+tau(1) from noiseless cells: -0.1654  (truth -0.1654, diff -5.6e-17)
+  same contrast after adding the periodic direction:       -0.1654  (diff -5.6e-17)
+
+ scenario cohort_g bias_lev_N1 bias_lev_N2 true_d4 bias_d4_contrast
+       S1       G0      0.0002     -0.0005  0.0000           0.0007
+       S1       G1     -0.0015     -0.0006  0.0000           0.0014
+       S2       G0     -0.0507     -0.1024 -0.1654           0.0040
+       S2       G1     -0.0510     -0.1029 -0.1654           0.0033
+       S3       G0     -0.0892     -0.1401 -0.1654           0.0010
+       S3       G1     -0.0883     -0.1406 -0.1654          -0.0022
+       S4       G0     -0.1728     -0.1239 -0.1294           0.0047
+       S4       G1     -0.1711     -0.1222 -0.1294           0.0009
+ sd_d4_contrast bias_taubar_N3 rej_overid
+         0.0637         0.0010      0.058
+         0.0659        -0.0019      0.058
+         0.0612        -0.0062      0.048
+         0.0654        -0.0076      0.062
+         0.0648        -0.0971      0.054
+         0.0674        -0.0949      0.068
+         0.0604        -0.4078      1.000
+         0.0652        -0.4095      0.998
+== sims/Rscript sim2_direct_contrast.R 18:32:12
+== (A) noiseless identity tests ==
+  theta = D2 tau(2) - D2 tau(6): truth -0.03702 | explicit contrast -0.03702 | diff -6.9e-17
+  regression readout of theta from an arbitrary representative: -0.03702 (diff 4.7e-16)  <- identified: exact
+  regression readout of D2 tau(3): -0.07232 vs truth -0.02234  <- NOT identified: representative-dependent
+  after adding the periodic null direction: cells change by 1.1e-16; contrast theta -0.03702 (unchanged)
+
+== (B) Monte Carlo ==
+ scenario theta_true bias_contrast sd_contrast bias_readout sd_readout
+       S2     -0.037        0.0063      0.1096      -0.0002     0.0797
+       S3     -0.037        0.0032      0.1068       0.0033     0.0808
+ d2_3_true_unidentified mean_d2_3_readout
+                -0.0223           -0.0747
+                -0.0223           -0.0723
+== sims/Rscript sim3_drift_bounds.R 18:32:13
+== population check ==
+d_perp (implied drifts of representative): 0.0117 0.0017 
+s=13 M=0.0100: tau(s) in [-0.0506, 0.0694] empty=FALSE | truth 0.2494 inside=FALSE
+s=13 M=0.0250: tau(s) in [-0.2306, 0.2494] empty=FALSE | truth 0.2494 inside=TRUE
+s=13 M=0.0500: tau(s) in [-0.5306, 0.5494] empty=FALSE | truth 0.2494 inside=TRUE
+s=13 M=0.1000: tau(s) in [-1.1306, 1.1494] empty=FALSE | truth 0.2494 inside=TRUE
+s=17 M=0.0100: tau(s) in [-0.1501, 0.0099] empty=FALSE | truth 0.2499 inside=FALSE
+s=17 M=0.0250: tau(s) in [-0.3901, 0.2499] empty=FALSE | truth 0.2499 inside=TRUE
+s=17 M=0.0500: tau(s) in [-0.7901, 0.6499] empty=FALSE | truth 0.2499 inside=TRUE
+s=17 M=0.1000: tau(s) in [-1.5901, 1.4499] empty=FALSE | truth 0.2499 inside=TRUE
+(identity) representative's tau_perp at s = 1 mod 4 vs truth minus its own linear part:
+   max abs diff on the subgrid: 2.22e-16 
+(d) second-difference bound leaves c unconstrained: the transformation
+    g+c(e-e0) is linear, so Delta^2 g is invariant — no finite interval exists.
+    [analytic fact; no computation required]
+
+== finite-sample (B=300, n_cell=500, IM 95%) — G2 tau( 13 ), truth 0.249 ==
+ dgp s_eval M_mult     M  coverage coverage_fixed_z med_width med_set_width
+  G2     13    0.4 0.010 0.1266667        0.1233333 0.3298220     0.1228261
+  G2     13    1.0 0.025 0.9566667        0.9566667 0.6894704     0.4828261
+  G2     13    2.0 0.050 1.0000000        1.0000000 1.2894704     1.0828261
+  G2     13    4.0 0.100 1.0000000        1.0000000 2.4894704     2.2828261
+    med_c empty_rate
+ 1.647706 0.04666667
+ 1.644856 0.00000000
+ 1.644856 0.00000000
+ 1.644856 0.00000000
+== finite-sample (B=300, n_cell=500, IM 95%) — G2 tau( 17 ), truth 0.25 ==
+ dgp s_eval M_mult     M  coverage coverage_fixed_z med_width med_set_width
+  G2     17    0.4 0.010 0.1066667        0.1066667 0.4319055     0.1563867
+  G2     17    1.0 0.025 0.9566667        0.9566667 0.9111989     0.6363867
+  G2     17    2.0 0.050 1.0000000        1.0000000 1.7111989     1.4363867
+  G2     17    4.0 0.100 1.0000000        1.0000000 3.3111989     3.0363867
+    med_c empty_rate
+ 1.647532 0.06666667
+ 1.644856 0.00000000
+ 1.644856 0.00000000
+ 1.644856 0.00000000
+== finite-sample (B=300, n_cell=500, IM 95%) — G3 tau( 13 ), truth 0.249 ==
+ dgp s_eval M_mult     M  coverage coverage_fixed_z  med_width med_set_width
+  G3     13    0.4 0.010 0.0200000      0.006666667 -0.1039080  -0.356319274
+  G3     13    1.0 0.025 0.9533333      0.900000000  0.2495990   0.003680726
+  G3     13    2.0 0.050 1.0000000      1.000000000  0.8160974   0.603680726
+  G3     13    4.0 0.100 1.0000000      1.000000000  2.0160974   1.803680726
+    med_c empty_rate
+ 1.959966  1.0000000
+ 1.932821  0.4733333
+ 1.644856  0.0000000
+ 1.644856  0.0000000
+== finite-sample (B=300, n_cell=500, IM 95%) — G3 tau( 17 ), truth 0.25 ==
+ dgp s_eval M_mult     M   coverage coverage_fixed_z  med_width med_set_width
+  G3     17    0.4 0.010 0.02333333      0.006666667 -0.1423871 -0.4801523185
+  G3     17    1.0 0.025 0.94000000      0.910000000  0.3275491 -0.0001523185
+  G3     17    2.0 0.050 1.00000000      1.000000000  1.0834753  0.7998476815
+  G3     17    4.0 0.100 1.00000000      1.000000000  2.6834753  2.3998476815
+    med_c empty_rate
+ 1.959966        1.0
+ 1.959144        0.5
+ 1.644856        0.0
+ 1.644856        0.0
+== finite-sample (B=300, n_cell=500, IM 95%) — G4 tau( 13 ), truth 0.249 ==
+ dgp s_eval M_mult     M   coverage coverage_fixed_z med_width med_set_width
+  G4     13    0.4 0.010 0.01666667       0.01666667 0.3828348     0.1859871
+  G4     13    1.0 0.025 0.88000000       0.88000000 0.7428298     0.5459871
+  G4     13    2.0 0.050 1.00000000       1.00000000 1.3428298     1.1459871
+  G4     13    4.0 0.100 1.00000000       1.00000000 2.5428298     2.3459871
+    med_c empty_rate
+ 1.644877          0
+ 1.644856          0
+ 1.644856          0
+ 1.644856          0
+== finite-sample (B=300, n_cell=500, IM 95%) — G4 tau( 17 ), truth 0.25 ==
+ dgp s_eval M_mult     M   coverage coverage_fixed_z med_width med_set_width
+  G4     17    0.4 0.010 0.01333333       0.01333333 0.5058759     0.2499203
+  G4     17    1.0 0.025 0.89000000       0.89000000 0.9858540     0.7299203
+  G4     17    2.0 0.050 1.00000000       1.00000000 1.7858540     1.5299203
+  G4     17    4.0 0.100 1.00000000       1.00000000 3.3858540     3.1299203
+    med_c empty_rate
+ 1.644867          0
+ 1.644856          0
+ 1.644856          0
+ 1.644856          0
+
+saved sim3_results.csv
+== sims/Rscript sim4_downstream.R 18:35:41
+Cell-mean design (entries 1,5,13; T=19; tau(1)=g(1)=0): cells=41 columns=39 rank=35 nullity=4
+Tenure-determined adoption (D = 1{s>=4}): corrected coefficient on D = NA (NA = D aliased with tenure dummies: not identified)
+Rank-deficient event-study design (E in {0,2,4}, t 4..7, window 2..5): columns=8 rank=7 (all E even: k mod 2 = t mod 2)
+Exact alignment: rank(MX)=10, rank(MZ_tau)=10, rank([MX, MZ_tau])=10 of 21 columns -> (R) fails; no within-sample correction
+Partial alignment (delta_i in {6,7}): composition balanced (share at delta=6 is 0.5 in every (k,t)); rank([W0,X]) = 44 of 44; shifts at k=-5,-4,-3: -0.1419389003 -0.0544448050 -0.0142446658; max|X'M Z_tau| = 5.999 
+
+                     block     tau twfe_true twfe_reported bias_observed
+                    <char>  <char>     <num>         <num>         <num>
+1:            A_absorption tau_sat    0.5682        0.5937     2.556e-02
+2:            A_absorption tau_lin    0.5682        0.5682     7.772e-15
+3:            A_absorption tau_mix    0.5682        0.5937     2.556e-02
+4:            B_correction tau_mix    0.5682        0.5937     2.556e-02
+5:       B_tenure_adoption tau_mix        NA        0.6970            NA
+6:              C_pretrend tau_sat        NA            NA            NA
+7: C2_exact_alignment_rank tau_sat        NA            NA            NA
+8:    C3_partial_alignment tau_sat        NA            NA            NA
+9:         D_single_cohort tau_sat    0.4384        0.4384    -3.608e-15
+   bias_formula abs_diff_formula invariance_gap_affine invariance_gap_periodic
+          <num>            <num>                 <num>                   <num>
+1:    2.556e-02        5.516e-15             4.530e-14               6.217e-15
+2:   -1.922e-15        9.694e-15             4.141e-14               9.770e-15
+3:    2.556e-02        1.688e-14             4.141e-14               3.664e-15
+4:           NA               NA                    NA                      NA
+5:           NA               NA                    NA                      NA
+6:           NA               NA                    NA                      NA
+7:           NA               NA                    NA                      NA
+8:           NA               NA                    NA                      NA
+9:           NA               NA                    NA                      NA
+   corrected_twfe corrected_minus_true corrected_se n_tenure_dropped n_coefs
+            <num>                <num>        <num>            <num>   <int>
+1:             NA                   NA           NA               NA      NA
+2:             NA                   NA           NA               NA      NA
+3:             NA                   NA           NA               NA      NA
+4:          0.578             0.009771      0.05056                4      NA
+5:             NA                   NA           NA                4      NA
+6:             NA                   NA           NA               NA      10
+7:             NA                   NA           NA               NA      NA
+8:             NA                   NA           NA               NA      NA
+9:             NA                   NA           NA               NA      NA
+   max_abs_err max_pre_shift n_pre_coefs rank_MX rank_MZ rank_MX_MZ cols_MX_MZ
+         <num>         <num>       <int>   <int>   <int>      <int>      <int>
+1:          NA            NA          NA      NA      NA         NA         NA
+2:          NA            NA          NA      NA      NA         NA         NA
+3:          NA            NA          NA      NA      NA         NA         NA
+4:          NA            NA          NA      NA      NA         NA         NA
+5:          NA            NA          NA      NA      NA         NA         NA
+6:   1.246e-14        0.1833           3      NA      NA         NA         NA
+7:          NA            NA          NA      10      10         10         21
+8:          NA            NA          NA      NA      NA         NA         NA
+9:          NA            NA          NA      NA      NA         NA         NA
+   shift_k_minus5 shift_k_minus4 shift_k_minus3 max_abs_XMZ
+            <num>          <num>          <num>       <num>
+1:             NA             NA             NA          NA
+2:             NA             NA             NA          NA
+3:             NA             NA             NA          NA
+4:             NA             NA             NA          NA
+5:             NA             NA             NA          NA
+6:             NA             NA             NA          NA
+7:             NA             NA             NA          NA
+8:        -0.1419       -0.05444       -0.01424       5.999
+9:             NA             NA             NA          NA
+        k beta_reported beta_true_outcome predicted_shift observed_shift
+    <num>         <num>             <num>           <num>          <num>
+ 1:    -5       0.06846           0.25174        -0.18329       -0.18329
+ 2:    -4       0.06059           0.13090        -0.07031       -0.07031
+ 3:    -3       0.01389           0.03229        -0.01839       -0.01839
+ 4:     0      -0.27438          -0.26428        -0.01010       -0.01010
+ 5:     1      -0.30606          -0.28033        -0.02573       -0.02573
+ 6:     2      -0.35348          -0.30908        -0.04441       -0.04441
+ 7:     3      -0.46123          -0.39648        -0.06475       -0.06475
+ 8:     4      -0.63776          -0.55174        -0.08601       -0.08601
+ 9:     5      -0.78120          -0.67342        -0.10777       -0.10777
+10:     6      -0.84880          -0.71899        -0.12981       -0.12981
+      abs_err
+        <num>
+ 1: 1.246e-14
+ 2: 6.523e-16
+ 3: 6.269e-15
+ 4: 2.776e-16
+ 5: 2.220e-15
+ 6: 1.277e-15
+ 7: 5.829e-15
+ 8: 1.110e-16
+ 9: 2.109e-15
+10: 2.442e-15
+                 design     B bias_reported rmse_reported cover_reported
+                 <char> <int>         <num>         <num>          <num>
+1:             baseline   100       0.02487       0.06652           0.95
+2:    zero_conditioning   100       0.01025       0.06283           0.99
+3: heterogeneous_effect   100       0.01813       0.05903           0.99
+4:      cohort_adoption   100       0.04237       0.07440           0.92
+5:      tenure_adoption   100       0.14880       0.16367           0.46
+   bias_corrected rmse_corrected cover_corrected share_corrected_NA
+            <num>          <num>           <num>              <num>
+1:      0.0023157        0.06343            0.98                  0
+2:      0.0124378        0.06542            0.98                  0
+3:     -0.0062790        0.05778            0.99                  0
+4:     -0.0006699        0.06426            0.98                  0
+5:            NaN            NaN             NaN                  1
+   mcse_reported
+           <num>
+1:      0.006201
+2:      0.006230
+3:      0.005646
+4:      0.006147
+5:      0.006852
+                           quantity        value
+                             <char>        <num>
+ 1:               bias_TWFE_tau_sat  2.55551e-02
+ 2:            max_abs_diff_formula  1.68823e-14
+ 3:       invariance_gap_affine_max  4.52971e-14
+ 4:     invariance_gap_periodic_max  9.76996e-15
+ 5:              single_cohort_bias -3.60822e-15
+ 6:            pretrend_max_abs_err  1.24623e-14
+ 7:              pretrend_SHIFT_k-5 -1.83287e-01
+ 8:              pretrend_SHIFT_k-4 -7.03053e-02
+ 9:              pretrend_SHIFT_k-3 -1.83943e-02
+10:      pretrend_COEF_reported_k-5  6.84564e-02
+11:      pretrend_COEF_reported_k-4  6.05932e-02
+12:      pretrend_COEF_reported_k-3  1.38917e-02
+13: pretrend_COEF_unconditioned_k-5  2.51744e-01
+14: pretrend_COEF_unconditioned_k-4  1.30898e-01
+15: pretrend_COEF_unconditioned_k-3  3.22861e-02
+16:     partial_alignment_shift_k-5 -1.41939e-01
+17:     partial_alignment_shift_k-4 -5.44448e-02
+18:     partial_alignment_shift_k-3 -1.42447e-02
+19:      partial_alignment_shift_k0 -7.81764e-03
+20:      partial_alignment_shift_k1 -1.99257e-02
+21:      partial_alignment_shift_k2 -3.43884e-02
+22:      partial_alignment_shift_k3 -5.01433e-02
+23:      partial_alignment_shift_k4 -6.66074e-02
+24:      partial_alignment_shift_k5 -8.34608e-02
+25:      partial_alignment_shift_k6 -1.00528e-01
+                           quantity        value
+                             <char>        <num>
+== sims/Rscript check_manuscript_values.R 18:56:17
+quantity                                                           from output        quoted            
+----------------------------------------------------------------------------------------------------------------
+keys unique in sim1 (scenario x cohort_g)                          1                  1                  ok
+sim1 has 8 rows (S1-S4 x G0,G1)                                    8                  8                  ok
+keys unique in sim3 (dgp x s_eval x M_mult)                        1                  1                  ok
+sim3 has 24 rows (G2,G3,G4 x s=13,17 x 4 M)                        24                 24                 ok
+keys unique in sim4_mc (design)                                    1                  1                  ok
+keys unique in sim4_manuscript_values (quantity)                   1                  1                  ok
+all values in sim4_manuscript_values finite                        1                  1                  ok
+A.1 closed form Delta_4^2 tau(5) = tau(9)-2tau(5)+tau(1), S2       -0.165359          -0.1654            ok
+A.1 closed form Delta_4^2 tau(9) = tau(13)-2tau(9)+tau(5), S2      -0.015001          -0.015             ok
+A.1 table row S1                                                   2e-04 -5e-04 0 7e-04 0.0637 0.001 0.058 0 0 0 0.001 0.064 0.001 0.058 ok
+A.1 table row S2                                                   -0.0507 -0.1024 -0.1654 0.004 0.0612 -0.0062 0.048 -0.051 -0.102 -0.165 0.004 0.061 -0.006 0.048 ok
+A.1 table row S3                                                   -0.0892 -0.1401 -0.1654 0.001 0.0648 -0.0971 0.054 -0.089 -0.14 -0.165 0.001 0.065 -0.097 0.054 ok
+A.1 table row S4                                                   -0.1728 -0.1239 -0.1294 0.0047 0.0604 -0.4078 1 -0.173 -0.124 -0.129 0.005 0.06 -0.408 1 ok
+A.1 contrast MC standard error <= .003 (sd/sqrt(500))              1                  1                  ok
+A.1 plateau-constrained bias under S3                              -0.0971            -0.097             ok
+sim2 has 2 rows (S2, S3)                                           2                  2                  ok
+A.2 theta true                                                     -0.037             -0.037             ok
+A.2 table S2                                                       0.0063 0.1096 -2e-04 0.0797 -0.0223 -0.0747 0.006 0.11 0 0.08 -0.022 -0.075 ok
+A.2 table S3                                                       0.0032 0.1068 0.0033 0.0808 -0.0223 -0.0723 0.003 0.107 0.003 0.081 -0.022 -0.072 ok
+A.2 MC standard error <= .005                                      1                  1                  ok
+A.3 G2 M/M0=1, tau(13): cov IM/fixed, width, set width, c          0.956667 0.956667 0.68947 0.482826 1.64486 0.957 0.957 0.69 0.48 1.64 ok
+A.3 G2 M/M0=1, tau(17): cov IM/fixed, width                        0.956667 0.956667 0.911199 0.957 0.957 0.91   ok
+A.3 G2 M/M0=2, tau(13): cov IM/fixed, width, set width, c          1 1 1.28947 1.08283 1.64486 1 1 1.29 1.08 1.64 ok
+A.3 G2 M/M0=2, tau(17): cov IM/fixed, width                        1 1 1.7112         1 1 1.71           ok
+A.3 G2 M/M0=4, tau(13): cov IM/fixed, width, set width, c          1 1 2.48947 2.28283 1.64486 1 1 2.49 2.28 1.64 ok
+A.3 G2 M/M0=4, tau(17): cov IM/fixed, width                        1 1 3.3112         1 1 3.31           ok
+A.3 G3 M/M0=1, tau(13): cov IM/fixed, width, set width, c          0.953333 0.9 0.249599 0.00368073 1.93282 0.953 0.9 0.25 0 1.93 ok
+A.3 G3 M/M0=1, tau(17): cov IM/fixed, width                        0.94 0.91 0.327549 0.94 0.91 0.33     ok
+A.3 G3 M/M0=2, tau(13): cov IM/fixed, width, set width, c          1 1 0.816097 0.603681 1.64486 1 1 0.82 0.6 1.64  ok
+A.3 G3 M/M0=2, tau(17): cov IM/fixed, width                        1 1 1.08348        1 1 1.08           ok
+A.3 G3 M/M0=4, tau(13): cov IM/fixed, width, set width, c          1 1 2.0161 1.80368 1.64486 1 1 2.02 1.8 1.64  ok
+A.3 G3 M/M0=4, tau(17): cov IM/fixed, width                        1 1 2.68348        1 1 2.68           ok
+A.3 G4 M/M0=1, tau(13): cov IM/fixed, width, set width, c          0.88 0.88 0.74283 0.545987 1.64486 0.88 0.88 0.74 0.55 1.64 ok
+A.3 G4 M/M0=1, tau(17): cov IM/fixed, width                        0.89 0.89 0.985854 0.89 0.89 0.99     ok
+A.3 G4 M/M0=2, tau(13): cov IM/fixed, width, set width, c          1 1 1.34283 1.14599 1.64486 1 1 1.34 1.15 1.64 ok
+A.3 G4 M/M0=2, tau(17): cov IM/fixed, width                        1 1 1.78585        1 1 1.79           ok
+A.3 G4 M/M0=4, tau(13): cov IM/fixed, width, set width, c          1 1 2.54283 2.34599 1.64486 1 1 2.54 2.35 1.64 ok
+A.3 G4 M/M0=4, tau(17): cov IM/fixed, width                        1 1 3.38585        1 1 3.39           ok
+A.3 G2 0.4: coverage tau(13) IM/fixed                              0.126667 0.123333  0.127 0.123        ok
+A.3 G2 0.4: coverage tau(17) IM/fixed                              0.106667 0.106667  0.107 0.107        ok
+A.3 G3 0.4: coverage tau(13) IM/fixed                              0.02 0.00666667    0.02 0.007         ok
+A.3 G3 0.4: coverage tau(17) IM/fixed                              0.0233333 0.00666667 0.023 0.007        ok
+A.3 G4 0.4: coverage tau(13) IM/fixed                              0.0166667 0.0166667 0.017 0.017        ok
+A.3 G4 0.4: coverage tau(17) IM/fixed                              0.0133333 0.0133333 0.013 0.013        ok
+A.3 G2 0.4 empty rate within .05-.07                               1                  1                  ok
+A.3 G3 1.0 empty rate within .47-.50                               1                  1                  ok
+A.3 G3 0.4 empty rate = 1                                          1 1                1 1                ok
+A.3 G4 empty rate = 0 at every M (8 rows)                          1                  1                  ok
+A.3 MC standard error of a coverage of .95 with B=300 ~ .013       0.0125831          0.013              ok
+A.3 MC standard error at .880 and .890 with B=300 ~ .019, .018     0.0187617 0.0180647 0.019 0.018        ok
+A.3 population width of the set for m at M=M0: G2, G3, G4          0.04 0 0.05        0.04 0 0.05        ok
+A.3 G4 population widths for tau(13), tau(17) at M=M0: .600, .800  0.6 0.8            0.6 0.8            ok
+A.3 G4 median estimated set width for tau(13) below its population width .600 (biased-down maximum) 1                  1                  ok
+C: TWFE bias, saturating path                                      0.0255551          0.0256             ok
+C: |bias - formula| within identity tolerance                      1.68823e-14        0                  ok
+C: affine-direction invariance gap within identity tolerance       4.52971e-14        0                  ok
+C: periodic-direction invariance gap within identity tolerance     9.76996e-15        0                  ok
+C: single-cohort bias within identity tolerance                    -3.60822e-15       0                  ok
+C: pre-trend identity error within identity tolerance              1.24623e-14        0                  ok
+C: pre-period SHIFTS at k=-5,-4,-3                                 -0.183287 -0.0703053 -0.0183943 -0.183 -0.07 -0.018 ok
+C: pre-period COEFS on reports                                     0.0684564 0.0605932 0.0138917 0.068 0.061 0.014  ok
+C: pre-period COEFS on the unconditioned outcome                   0.251744 0.130898 0.0322861 0.252 0.131 0.032  ok
+C: partial-alignment shifts at k=-5,-4,-3                          -0.141939 -0.0544448 -0.0142447 -0.1419 -0.0544 -0.0142 ok
+6.4: Simulation-4 shifts quoted after Proposition 5 (.18, .07, .02) 0.183287 0.0703053 0.0183943 0.18 0.07 0.02     ok
+6.4: max centered curvature of the saturating path = .061          0.0610713          0.061              ok
+C MC table baseline                                                0.0248658 0.0665186 0.95 0.00231566 0.0634284 0.98 0.025 0.067 0.95 0.002 0.063 0.98 ok
+C MC table zero_conditioning                                       0.0102504 0.0628327 0.99 0.0124378 0.0654191 0.98 0.01 0.063 0.99 0.012 0.065 0.98 ok
+C MC table heterogeneous_effect                                    0.0181267 0.0590269 0.99 -0.00627896 0.0577824 0.99 0.018 0.059 0.99 -0.006 0.058 0.99 ok
+C MC table cohort_adoption                                         0.0423667 0.0744026 0.92 -0.000669887 0.0642629 0.98 0.042 0.074 0.92 -0.001 0.064 0.98 ok
+C MC table tenure_adoption (reported)                              0.1488 0.163675 0.46 0.149 0.164 0.46   ok
+C MC table tenure_adoption: corrected estimator not identified     1                  1                  ok
+----------------------------------------------------------------------------------------------------------------
+checked 71 assertions (quoted quantities and structural checks): 71 reproduced, 0 MISMATCHED
+== sims/Rscript check_manuscript_values.R --selftest 18:56:17
+self-test: negative controls on perturbed copies of the outputs
+   unmodified copy (must PASS)                                                        -> 0 mismatch(es): as expected
+   delete the G4/s=13/M=M0 row of sim3 (must FAIL)                                    -> 6 mismatch(es): as expected
+   duplicate the G4/s=13/M=M0 row of sim3 (must FAIL)                                 -> 7 mismatch(es): as expected
+   set that row's coverage to .50 (must FAIL)                                         -> 1 mismatch(es): as expected
+   set that row's coverage to NA (must FAIL)                                          -> 1 mismatch(es): as expected
+   delete the baseline row of sim4_mc (must FAIL)                                     -> 2 mismatch(es): as expected
+   delete the pretrend_max_abs_err quantity (must FAIL)                               -> 1 mismatch(es): as expected
+   set an identity residual to 1e-6 (must FAIL)                                       -> 1 mismatch(es): as expected
+   set an identity residual to 5e-11 (must PASS: within the scale-aware tolerance)    -> 0 mismatch(es): as expected
+   delete the S3/G0 row of sim1 (must FAIL)                                           -> 6 mismatch(es): as expected
+self-test passed: every perturbation is detected and the unmodified copy passes
+== sims/Rscript design_rank.R 18:56:17
+ cells parameters rank nullity stride_d nullity_equals_d increment_components
+    41         39   35       4        4             TRUE                    4
+ increment_complete  C_d w_last_cohort lemma1_condition three_cohort_formula
+               TRUE TRUE             6             TRUE                    4
+identified?  D2 tau(3): FALSE  | D4^2 tau(5): TRUE  | D2tau(2)-D2tau(6): TRUE 
+entries 1,2,3        T= 3: nullity=1 d=1 components=1 C_d=TRUE lemma1=TRUE three-cohort formula=1
+entries 1,2,3        T= 6: nullity=1 d=1 components=1 C_d=TRUE lemma1=TRUE three-cohort formula=1
+entries 1,2,3        T=11: nullity=1 d=1 components=1 C_d=TRUE lemma1=TRUE three-cohort formula=1
+entries 1,3,5        T= 5: nullity=2 d=2 components=2 C_d=TRUE lemma1=TRUE three-cohort formula=2
+entries 1,3,5        T= 8: nullity=2 d=2 components=2 C_d=TRUE lemma1=TRUE three-cohort formula=2
+entries 1,3,5        T=13: nullity=2 d=2 components=2 C_d=TRUE lemma1=TRUE three-cohort formula=2
+entries 1,7,10       T=10: nullity=6 d=3 components=6 C_d=FALSE lemma1=FALSE three-cohort formula=6
+entries 1,7,10       T=13: nullity=3 d=3 components=3 C_d=TRUE lemma1=TRUE three-cohort formula=3
+entries 1,7,10       T=18: nullity=3 d=3 components=3 C_d=TRUE lemma1=TRUE three-cohort formula=3
+entries 1,6,9        T= 9: nullity=5 d=1 components=5 C_d=FALSE lemma1=FALSE three-cohort formula=5
+entries 1,6,9        T=12: nullity=2 d=1 components=2 C_d=FALSE lemma1=FALSE three-cohort formula=2
+entries 1,6,9        T=17: nullity=1 d=1 components=1 C_d=TRUE lemma1=TRUE three-cohort formula=1
+entries 1,4,8        T= 8: nullity=3 d=1 components=3 C_d=FALSE lemma1=FALSE three-cohort formula=3
+entries 1,4,8        T=11: nullity=1 d=1 components=1 C_d=TRUE lemma1=TRUE three-cohort formula=1
+entries 1,4,8        T=16: nullity=1 d=1 components=1 C_d=TRUE lemma1=TRUE three-cohort formula=1
+entries 1,6,13       T=13: nullity=5 d=1 components=5 C_d=FALSE lemma1=FALSE three-cohort formula=5
+entries 1,6,13       T=16: nullity=2 d=1 components=2 C_d=FALSE lemma1=FALSE three-cohort formula=2
+entries 1,6,13       T=21: nullity=1 d=1 components=1 C_d=TRUE lemma1=TRUE three-cohort formula=1
+
+Design {1,4,8}, T=8 (d = 1 but C_1 fails):
+ cells parameters rank nullity stride_d nullity_equals_d increment_components
+    14         17   14       3        1            FALSE                    3
+ increment_complete   C_d w_last_cohort lemma1_condition three_cohort_formula
+               TRUE FALSE             0            FALSE                    3
+[[1]]
+[1] 2 5
+
+[[2]]
+[1] 3 6
+
+[[3]]
+[1] 1 4 7
+
+== sims/python3 check_thm1_support.py 18:56:18
+entries          Tmax  d=gcd  dim  dim==d  max|D2 tau|   Cor.2  max|M.dir|   Thm 3
+[1, 2]             10      1    1    True        0.000   holds     2.2e-15   holds
+[1, 2, 3]          10      1    1    True        0.000   holds     5.8e-15   holds
+[1, 3]             10      2    2    True        1.876   FAILS     5.4e-15   holds
+[1, 3, 5]          12      2    2    True        2.090   FAILS     5.2e-15   holds
+[1, 4, 7]          14      3    3    True        2.158   FAILS     5.8e-15   holds
+[1, 5, 13]         19      4    4    True        2.252   FAILS     7.9e-15   holds
+[1, 5, 9]          16      4    4    True        2.707   FAILS     6.7e-15   holds
+[1, 2, 5]          12      1    1    True        0.000   holds     2.6e-15   holds
+[1, 6]             14      5    5    True        2.731   FAILS     1.0e-14   holds
+[1, 7, 13]         20      6    6    True        3.017   FAILS     8.3e-15   holds
+[1, 5, 13]         25      4    4    True        2.213   FAILS     1.7e-14   holds
+[1, 2, 5, 13]      19      1    1    True        0.000   holds     7.0e-15   holds
+[1, 3, 7]          14      2    2    True        2.112   FAILS     5.5e-15   holds
+[1, 9]             20      8    8    True        2.467   FAILS     9.9e-15   holds
+== sims/python3 check_lemma1_trapezoid.py 18:56:18
+(a) K=3: exact formula nullity = max(d, (e2-e1) - (T-e3)) ?
+   checked 1547, mismatches 0
+
+(b) all K in {2,3,4,5}: sufficient condition  T - e_K >= (e2-e1) - d  =>  nullity = d ?
+   checked 9401 (condition holds), violations 0
+
+(c) K=4: does  max(d, (e2-e1) - (T-e_K))  still give the nullity? (upper bound? exact?)
+   equal 2123, nullity < formula 297, nullity > formula 0
+    ('got<pred', [1, 4, 5, 6], 7, 1, 1, 2, 1)
+    ('got<pred', [1, 4, 5, 7], 8, 1, 1, 2, 1)
+    ('got<pred', [1, 4, 5, 8], 9, 1, 1, 2, 1)
+    ('got<pred', [1, 4, 5, 9], 10, 1, 1, 2, 1)
+    ('got<pred', [1, 4, 5, 10], 11, 1, 1, 2, 1)
+    ('got<pred', [1, 4, 5, 11], 12, 1, 1, 2, 1)
+== sims/python3 check_lemma1_components.py 18:56:22
+================================================================================================
+Lemma 1(o): nullity = #components of the increment graph;  (iv): nullity <= max(d, Delta_2 - w)
+
+  E=[1, 5, 13], T=19: cells=41 cols=39 nullity=4 d=4 w=6 components=4 [[1, 5, 9, 13, 17], [2, 6, 10, 14, 18], [3, 7, 11, 15], [4, 8, 12, 16]] bound=max(4,-2)=4
+  E=[1, 4, 8], T=8: cells=14 cols=17 nullity=3 d=1 w=0 components=3 [[1, 4, 7], [2, 5], [3, 6]] bound=max(1,3)=3
+  E=[1, 6, 13], T=19: cells=40 cols=39 nullity=1 d=1 w=6 components=1 [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]] bound=max(1,-1)=1
+  E=[1, 6, 13], T=16: cells=31 cols=33 nullity=2 d=1 w=3 components=2 [[1, 3, 5, 6, 8, 10, 11, 13, 15], [2, 4, 7, 9, 12, 14]] bound=max(1,2)=2
+  E=[1, 5, 9, 11, 12], T=12: cells=27 cols=27 nullity=3 d=1 w=0 components=3 [[1, 3, 5, 7, 9, 11], [2, 6, 10], [4, 8]] bound=max(1,4)=4
+
+  sweep: 10934 designs (e_1 = 1, 3 <= K <= 5, T <= e_K + 13); violations of (o): 0; of (iv): 0; bound strict in 1188
+== sims/python3 check_interrupted.py 18:56:25
+====================================================================================================
+(A) dose designs
+
+uninterrupted, 8 waves, monthly entry: cells=192 cols=61 rank=60 nullity=1 d=1
+   doses [1, 2, 3, 4, 5, 6, 7, 8]  elapsed j(k) [0, 1, 2, 3, 4, 5, 6, 7]
+   kernel tau-basis: [['0', '1/7', '2/7', '3/7', '4/7', '5/7', '6/7', '1']]
+   first basis vector proportional to j(k)? True
+   dose-linear path tau(k)=k-1 in kernel (undetectable)? True
+   calendar-linear path tau(k)=j(k) in kernel (undetectable)? True
+
+CPS 4-8-4, monthly entry: cells=192 cols=69 rank=68 nullity=1 d=1
+   doses [1, 2, 3, 4, 5, 6, 7, 8]  elapsed j(k) [0, 1, 2, 3, 12, 13, 14, 15]
+   kernel tau-basis: [['0', '1/15', '2/15', '1/5', '4/5', '13/15', '14/15', '1']]
+   first basis vector proportional to j(k)? True
+   dose-linear path tau(k)=k-1 in kernel (undetectable)? False
+   calendar-linear path tau(k)=j(k) in kernel (undetectable)? True
+
+CPS 4-8-4, monthly entry, T truncates the last cohorts: cells=162 cols=60 rank=59 nullity=1 d=1
+   doses [1, 2, 3, 4, 5, 6, 7, 8]  elapsed j(k) [0, 1, 2, 3, 12, 13, 14, 15]
+   kernel tau-basis: [['0', '1/15', '2/15', '1/5', '4/5', '13/15', '14/15', '1']]
+   first basis vector proportional to j(k)? True
+   dose-linear path tau(k)=k-1 in kernel (undetectable)? False
+   calendar-linear path tau(k)=j(k) in kernel (undetectable)? True
+
+2 on, 2 off, 2 on: cells=96 cols=55 rank=54 nullity=1 d=1
+   doses [1, 2, 3, 4]  elapsed j(k) [0, 1, 4, 5]
+   kernel tau-basis: [['0', '1/5', '4/5', '1']]
+   first basis vector proportional to j(k)? True
+   dose-linear path tau(k)=k-1 in kernel (undetectable)? False
+   calendar-linear path tau(k)=j(k) in kernel (undetectable)? True
+
+CPS pattern but entry every 2 periods (stride 2): cells=192 cols=92 rank=90 nullity=2 d=2
+   doses [1, 2, 3, 4, 5, 6, 7, 8]  elapsed j(k) [0, 1, 2, 3, 12, 13, 14, 15]
+   kernel tau-basis: [['0', '-1', '1/7', '-6/7', '6/7', '-1/7', '1', '0'], ['0', '1', '0', '1', '0', '1', '0', '1']]
+   first basis vector proportional to j(k)? False
+   dose-linear path tau(k)=k-1 in kernel (undetectable)? False
+   calendar-linear path tau(k)=j(k) in kernel (undetectable)? True
+
+6-wave rotation, 1 on 1 off (alternating months): cells=144 cols=62 rank=60 nullity=2 d=1
+   doses [1, 2, 3, 4, 5, 6]  elapsed j(k) [0, 2, 4, 6, 8, 10]
+   kernel tau-basis: [['0', '0', '0', '0', '0', '0'], ['0', '1/5', '2/5', '3/5', '4/5', '1']]
+   first basis vector proportional to j(k)? False
+   dose-linear path tau(k)=k-1 in kernel (undetectable)? True
+   calendar-linear path tau(k)=j(k) in kernel (undetectable)? True
+
+====================================================================================================
+(B) Lemma 1(iv):  nu <= max(d, Delta_2 - (T - e_K))  [last cohort; the lemma]   vs the WITHDRAWN third-cohort conjecture
+
+designs: 10934; violations of Lemma 1(iv) [last cohort]: 0   <- must be 0
+failures of the WITHDRAWN third-cohort conjecture: 72 (expected 72; not a property of the lemma); designs where the withdrawn bound is strict: 95
+  E=(1, 5, 9, 13) T=15: nu=4  bound_e3=4  bound_eK=4  d=4
+  E=(1, 3, 7, 11) T=12: nu=2  bound_e3=2  bound_eK=2  d=2
+  E=(1, 6, 7, 12) T=13: nu=1  bound_e3=1  bound_eK=4  d=1
+
+====================================================================================================
+(C) robustness of (A): recruitment window, truncation, and a disconnected incidence graph
+
+    4 cohorts: nullity=2  kernel ∝ j(k)? False  dose-linear detectable? False
+    6 cohorts: nullity=2  kernel ∝ j(k)? False  dose-linear detectable? False
+    8 cohorts: nullity=2  kernel ∝ j(k)? False  dose-linear detectable? False
+    9 cohorts: nullity=2  kernel ∝ j(k)? False  dose-linear detectable? False
+   10 cohorts: nullity=1  kernel ∝ j(k)? True  dose-linear detectable? True
+   11 cohorts: nullity=1  kernel ∝ j(k)? True  dose-linear detectable? True
+   12 cohorts: nullity=1  kernel ∝ j(k)? True  dose-linear detectable? True
+   16 cohorts: nullity=1  kernel ∝ j(k)? True  dose-linear detectable? True
+   24 cohorts: nullity=1  kernel ∝ j(k)? True  dose-linear detectable? True
+
+====================================================================================================
+(D) event-study sensitivity: shift(k) = tau(k+delta) - ell(k) as a combination of second differences
+
+   nodes k0=-1, k1=-2, delta=6 (Simulation 4's configuration); weights on Delta^2 tau(y), y = tenure
+   k=-5:  sum |weights| = 6   weights {1: '1', 2: '2', 3: '3'}
+   k=-4:  sum |weights| = 3   weights {2: '1', 3: '2'}
+   k=-3:  sum |weights| = 1   weights {3: '1'}
+   k=+0:  sum |weights| = 1   weights {4: '1'}
+   k=+3:  sum |weights| = 10   weights {4: '4', 5: '3', 6: '2', 7: '1'}
+   k=+6:  sum |weights| = 28   weights {4: '7', 5: '6', 6: '5', 7: '4', 8: '3', 9: '2', 10: '1'}
+
+   With tau(s) = .30(1 - e^(-.6(s-1))): max |Delta^2 tau| over tenures 1..13 is C = 0.0611
+   k=-5: |shift| = 0.1833  <=  C * sum|w| = 0.3664   (ratio 0.50)
+   k=-4: |shift| = 0.0703  <=  C * sum|w| = 0.1832   (ratio 0.38)
+   k=-3: |shift| = 0.0184  <=  C * sum|w| = 0.0611   (ratio 0.30)
+   k=+0: |shift| = 0.0101  <=  C * sum|w| = 0.0611   (ratio 0.17)
+   k=+3: |shift| = 0.0648  <=  C * sum|w| = 0.6107   (ratio 0.11)
+   k=+6: |shift| = 0.1298  <=  C * sum|w| = 1.7100   (ratio 0.08)
+
+   (D') Proposition 5 equality test at C = .06 (bound = C * m_k(m_k+1)/2):
+   k=-5: bound 0.3600   constant +C: |shift| 0.3600 (equal: True)   alternating: |shift| 0.1200 (<= bound: True)
+   k=-4: bound 0.1800   constant +C: |shift| 0.1800 (equal: True)   alternating: |shift| 0.0600 (<= bound: True)
+   k=-3: bound 0.0600   constant +C: |shift| 0.0600 (equal: True)   alternating: |shift| 0.0600 (<= bound: True)
+   k=+0: bound 0.0600   constant +C: |shift| 0.0600 (equal: True)   alternating: |shift| 0.0600 (<= bound: True)
+   k=+3: bound 0.6000   constant +C: |shift| 0.6000 (equal: True)   alternating: |shift| 0.1200 (<= bound: True)
+   k=+6: bound 1.6800   constant +C: |shift| 1.6800 (equal: True)   alternating: |shift| 0.2400 (<= bound: True)
+   constant curvature attains the bound at every k; alternating curvature stays below it
+
+====================================================================================================
+(E) published CPS month-in-sample indices: a DESCRIPTIVE per-month profile (Section 8.1; not an estimate of conditioning)
+
+   McIllece 2022 Tab. 2, unemployed (log multiplicative bias)
+      MIS values      : [1.113, 1.053, 1.014, 0.989, 1.0, 0.955, 0.939, 0.938]
+      per-month rates : [-0.0554, -0.0377, -0.025, 0.0012, -0.046, -0.0169, -0.0011]   (interval 4->5 spans 9 months)
+      rates, demeaned : [-0.0296, -0.0119, 0.0009, 0.0271, -0.0202, 0.0089, 0.0248]   (descriptive; retains cohort effects)
+      gap rate minus the largest in-block rate: 0.0023
+      D-weighted contrast of the published index = 0.5098   (a constant per-month PATTERN gives 0, a constant per-interview PATTERN gives -8c; descriptive comparison only)
+   McIllece 2022 Tab. 2, employed (log multiplicative bias)
+      MIS values      : [1.006, 1.006, 1.005, 1.0, 1.002, 0.992, 0.993, 0.996]
+      per-month rates : [0.0, -0.001, -0.005, 0.0002, -0.01, 0.001, 0.003]   (interval 4->5 spans 9 months)
+      rates, demeaned : [0.0017, 0.0007, -0.0033, 0.0019, -0.0083, 0.0027, 0.0047]   (descriptive; retains cohort effects)
+      gap rate minus the largest in-block rate: -0.0028
+      D-weighted contrast of the published index = 0.002   (a constant per-month PATTERN gives 0, a constant per-interview PATTERN gives -8c; descriptive comparison only)
+   Bailar 1975 Tab. 1 (1968-69), hours worked 35-40 (log index)
+      MIS values      : [92.9, 97.9, 100.1, 101.7, 98.7, 101.9, 103.0, 103.8]
+      per-month rates : [0.0524, 0.0222, 0.0159, -0.0033, 0.0319, 0.0107, 0.0077]   (interval 4->5 spans 9 months)
+      rates, demeaned : [0.0328, 0.0026, -0.0038, -0.023, 0.0123, -0.0089, -0.0119]   (descriptive; retains cohort effects)
+      gap rate minus the largest in-block rate: -0.0557
+      D-weighted contrast of the published index = -0.5017   (a constant per-month PATTERN gives 0, a constant per-interview PATTERN gives -8c; descriptive comparison only)
+   Bailar 1975 Tab. 1 (1970-72), hours worked 35-40 (log index)
+      MIS values      : [93.1, 97.7, 99.9, 101.5, 99.2, 101.7, 103.1, 103.9]
+      per-month rates : [0.0482, 0.0223, 0.0159, -0.0025, 0.0249, 0.0137, 0.0077]   (interval 4->5 spans 9 months)
+      rates, demeaned : [0.0296, 0.0037, -0.0027, -0.0211, 0.0063, -0.0049, -0.0109]   (descriptive; retains cohort effects)
+      gap rate minus the largest in-block rate: -0.0508
+      D-weighted contrast of the published index = -0.457   (a constant per-month PATTERN gives 0, a constant per-interview PATTERN gives -8c; descriptive comparison only)
+   Bailar 1975 Tab. 1 (1968-69), unemployed [MIS 1,5 carried extra questions] (log index)
+      MIS values      : [120.0, 101.5, 96.4, 92.8, 109.3, 96.5, 92.6, 91.0]
+      per-month rates : [-0.1674, -0.0516, -0.0381, 0.0182, -0.1246, -0.0413, -0.0174]   (interval 4->5 spans 9 months)
+      rates, demeaned : [-0.1071, 0.0087, 0.0222, 0.0785, -0.0643, 0.019, 0.0429]   (descriptive; retains cohort effects)
+      gap rate minus the largest in-block rate: 0.0356
+      D-weighted contrast of the published index = 1.6705   (a constant per-month PATTERN gives 0, a constant per-interview PATTERN gives -8c; descriptive comparison only)
+   Solon 1986 Tab. 1, unemployed (thousands) [MIS 4,8 carried extra questions] (thousands)
+      MIS values      : [1028, 952, 939, 964, 958, 913, 900, 941]
+      per-month rates : [-76.0, -13.0, 25.0, -0.6667, -45.0, -13.0, 41.0]   (interval 4->5 spans 9 months)
+      rates, demeaned : [-64.3333, -1.3333, 36.6667, 11.0, -33.3333, -1.3333, 52.6667]   (descriptive; retains cohort effects)
+      gap rate minus the largest in-block rate: -41.6667
+      D-weighted contrast of the published index = 678   (a constant per-month PATTERN gives 0, a constant per-interview PATTERN gives -8c; descriptive comparison only)
+
+   Restricted descriptive patterns for comparison by inspection: under a constant change per calendar month every
+   rate is the same; under a constant change per interview the six in-block rates are equal and the 4->5 rate is
+   one ninth of them.  The published tables carry no covariances and retain the cohort effects, so neither pattern
+   is tested here and neither profile is an estimate of conditioning (Section 8.1).
+== sims/python3 check_dose_sharpness.py 18:56:27
+(i) the round-3 counterexample: E = {1,2,4}, J = {0,1,3}, T = 7
+    cells=9 cols=10 rank=8 full nullity=2  tau-projection dimension=2  (v0.7 asserted 1; the cohort set has a gap, (P') fails)
+
+(ii) sweep: arithmetic-progression cohorts, full field period; (P') predicts dim = #classes mod d
+    (P') holds and dim == #classes : 326
+    (P') holds and dim != #classes : 0   <- must be 0 for the theorem
+    (P') fails but dim == #classes : 123   (the condition is sufficient, not necessary)
+    (P') fails and dim  > #classes : 47   (the condition is not vacuous)
+
+(iii) gapped cohort sets with the same pattern can exceed the prediction even when spacings are realized
+    E=[1, 2, 4]: tau-dim=2 (prediction under (P') would be 1; (P') fails)
+    E=[1, 2, 3, 4]: tau-dim=1 (prediction under (P') would be 1; (P') holds)
+    E=[1, 3, 4]: tau-dim=2 (prediction under (P') would be 1; (P') fails)
+    E=[1, 2, 4, 5]: tau-dim=2 (prediction under (P') would be 1; (P') fails)
+
+(iv) CPS pattern, monthly entry: Gamma = 9, so (P') needs L >= 9, i.e. ten cohorts
+    Gamma(J,1) = 9;  1 in J-J: True
+     8 cohorts: tau-dim=2  (P') fails
+     9 cohorts: tau-dim=2  (P') fails
+    10 cohorts: tau-dim=1  (P') holds
+    11 cohorts: tau-dim=1  (P') holds
+    13 cohorts: tau-dim=1  (P') holds
+
+(v) the pattern's difference set omits 4..8, which (P) as written required and the CPS cannot realize
+    J-J = [1, 2, 3, 9, 10, 11, 12, 13, 14, 15]
+
+(vi) two facts cited in the text: (c) for d > 1 is not spanned by within-class divided differences, and
+     (d) for d > 1 an unequally spaced pattern can still contain the dose-linear path
+    J=[0, 1, 2, 3], d=2: tau-dim=2, identified functionals=1 (one cross-class contrast; no class has three offsets)
+    J=[0, 1, 3, 4], d=3: tau-dim=2, dose-linear path in kernel: True  (k-1 = (2/3) j + rho, rho = 1/3 on the class of 1)
+
+all assertions passed
+== sims/python3 check_recovery_support.py 18:56:29
+====================================================================================================
+(A) full kernel vs tenure projection; connectedness in Propositions 2-3
+
+   six-cell support E={1,4,6}, cells (e,e),(e,e+1): 6 cells, 9 columns, rank 6, full nullity 3, projected nullity 1
+   observed increments [1], increment-graph components 1, incidence-graph components 3
+   ok   rank 6 of 9, full nullity 3, projected nullity 1 (the review's example)
+   ok   C_1 holds: single observed increment, one component
+   ok   incidence graph has three components
+   ok   dim K = dim K_tau + (c - 1)
+   ok   with g known exactly, the (alpha, tau) design still has nullity 1: tau(2) is not pinned
+   ok   h_tau(2)=a, h_alpha(e+1)=-a, h_g=0 preserves every cell mean
+   cohorts {1,2,5}, same schedule: full nullity 2, projected 1, incidence components 2; nullity with g known 0
+   ok   disconnected (c = 2) yet g known pins tau(2): (CG) is sufficient for Proposition 2, not necessary
+   ok   trapezoid E={1,4,6}, T=7: connected, full nullity = projected nullity
+   ok   on the trapezoid, g known pins tau entirely (d = 1)
+   sweep: 9183 supports (trapezoids with up to two cells removed; 140 disconnected): 0 violations of dim K = dim K_tau + (c - 1)
+   ok   identity holds on every support in the sweep, including disconnected ones
+
+====================================================================================================
+(B) Theorem 5: the reference categories must carry zero effect
+
+   events 3..7, window -2..2, effect 1{k>=0}, references {-1,+1}: rank 16 of 16; coefficients {-2: '1/2', 0: '1/2', 2: '-1/2'}
+   ok   full column rank 16 of 16
+   ok   pre-period coefficient at k=-2 equals +1/2 although effects are homogeneous and untreated outcomes are zero
+   same design, references {-1,-2}: rank 16 of 16; coefficients {0: '1', 1: '1', 2: '1'}
+   ok   with both references pre-event the pre-period coefficients are zero and the post-period ones equal the effect
+
+====================================================================================================
+(C) Theorem 4, condition (R): tenure-determined exposure has no unique coefficient
+
+   staggered panel E=[1, 5, 13], T=19: rank[W, D, Z_tau] = 38, rank[W, Z_tau] = 38 -> D adds nothing
+   ok   D = 1{s >= 4} lies in span[W, Z_tau]: condition (R) fails
+   ok   exact fits exist with beta = 0 and with beta = 1: the coefficient on D is not determined by the data
+
+====================================================================================================
+(D) Corollary 1 at d = 2; plateau boundary
+
+   ok   d = 2: ordinary second difference Delta^2 tau(4) is NOT identified (weights in two residue classes)
+   ok   d = 2: centred lag-2 second difference Delta_2^2 tau(4) = tau(6) - 2 tau(4) + tau(2) IS identified
+   ok   d = 2: the increment tau(4) - tau(2) is not identified
+   ok   plateau from S* = 2 with d = 1: Delta^2 tau(2) = -1 (centre at S*), Delta^2 tau(3) = 0 (all three points on the plateau)
+
+====================================================================================================
+(E) Simulation 3, design G4: population widths at M = M0
+
+   drifts (+M0, +M0): width of the set for m = 2 M0 - (max - min) = 1/20 = 0.050; tau(13): 0.600; tau(17): 0.800
+   ok   widths .050, .600, .800
+   ok   design G3 (+M0, -M0): the set for m is a point at M = M0
+
+====================================================================================================
+(F) Table 1, uninterrupted rows, by exact rank (the interrupted rows are in check_interrupted.py / check_dose_sharpness.py)
+
+   adjacent entry, long follow-up: E={1,2,3}, T=8: 21 cells, 17 parameters, rank 16, nullity 1 (projected 1, components 1)
+   ok   dim Theta_tau = 1
+   entry every d=3 waves, long follow-up: E={1,4,7}, T=12: 27 cells, 25 parameters, rank 22, nullity 3 (projected 3, components 1)
+   ok   dim Theta_tau = 3
+   JLPS: E={1,5,13}, T=19: 41 cells, 39 parameters, rank 35, nullity 4 (projected 4, components 1)
+   ok   dim Theta_tau = 4
+   E={1,4,8}, T=8 (no follow-up of the last cohort): 14 cells, 17 parameters, rank 14, nullity 3 (projected 3, components 1)
+   ok   dim Theta_tau = 3
+   single refreshment at wave 5: E={1,5}, T=12: 20 cells, 24 parameters, rank 20, nullity 4 (projected 4, components 1)
+   ok   dim Theta_tau = 4
+   ok   JLPS design: 41 cells, 39 free parameters, rank 35 (as quoted in Sections 3 and 8 and Appendix C)
+   ok   E={1,4,8}, T=8: 14 cells, 17 parameters, rank 14 (as quoted after Theorem 1)
+
+====================================================================================================
+check_recovery_support.py: 0 failure(s)

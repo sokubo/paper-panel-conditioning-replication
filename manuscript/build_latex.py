@@ -22,8 +22,8 @@ LTX  = os.path.join(HERE, 'latex')
 # COMMIT7 is a deliberate placeholder that make_arxiv_zips.sh refuses to submit,
 # so the paper can never go out naming a commit that does not exist.
 ARCHIVE_REPO   = "https://github.com/sokubo/paper-panel-conditioning-replication"
-ARCHIVE_TAG    = "paper-v0.9"
-ARCHIVE_COMMIT = "ea044e6"
+ARCHIVE_TAG    = "paper-v1.0"
+ARCHIVE_COMMIT = "COMMIT7"
 
 TITLE_THANKS = (
     r"\thanks{Code reproducing every numerical result in this paper, including the "

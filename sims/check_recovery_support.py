@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""T1 v0.9 — support conditions behind the recovery results (Section 5), the reference-category premise of
+"""T1 v1.0 — support conditions behind the recovery results (Section 5), the reference-category premise of
 Theorem 5, the aliasing caveat of Theorem 4, and the population widths of Simulation 3's design G4.
 Exact rational arithmetic (fractions.Fraction) throughout this file; standard library only; no data, no
 network, no other scripts.  Run:  python3 check_recovery_support.py     (exit status 1 on any failure)
@@ -28,6 +28,15 @@ network, no other scripts.  Run:  python3 check_recovery_support.py     (exit st
 (D) Corollary 1's residue classes for d = 2, and the centred plateau boundary of Proposition 1.
 (E) Simulation 3, design G4: population width of the identified set for m at M = M0 with both true drifts
     equal to M0 is 2 M0 - (max d - min d) = 2 M0 = .050, and the widths for tau(13) and tau(17) are .600 and .800.
+(G) Proposition 3 without (CG) (round-5 review, N1).  The identified set for tau(2) under the drift bound M is
+    computed EXACTLY by Fourier-Motzkin elimination over the kernel coefficients, and compared with the interval
+    Proposition 3 displays for a given representative.  On cohorts {1, 2, 5}, two-cell schedule, zero cell means,
+    zero representative: identified set [-M, M] = displayed interval, although the incidence graph has two
+    components -- (CG) is sufficient for sharpness, not necessary.  Same support, representative with
+    g_hat(5) = 2.7 M: displayed [-M, 0.1 M], identified set still [-M, M] -- without (CG) the displayed interval
+    depends on the representative and can be strictly narrower than the identified set.  Six-cell support
+    E = {1, 4, 6}: displayed [-M, M], identified set unbounded for every M, including M = 0.  A connected
+    trapezoid is included as a control: displayed = identified.
 """
 from fractions import Fraction as F
 import itertools, sys
@@ -136,7 +145,7 @@ full, proj, rk, n = nullities(six)
 U, ncomp = increment_graph(six); c = incidence_components(six)
 print(f"   six-cell support E={{1,4,6}}, cells (e,e),(e,e+1): {len(six)} cells, {n} columns, rank {rk}, full nullity {full}, projected nullity {proj}")
 print(f"   observed increments {U}, increment-graph components {ncomp}, incidence-graph components {c}")
-check((full, proj, rk, n) == (3, 1, 6, 9), "rank 6 of 9, full nullity 3, projected nullity 1 (the review's example)")
+check((full, proj, rk, n) == (3, 1, 6, 9), "rank 6 of 9, full nullity 3, projected nullity 1 (the six-cell example)")
 check(U == [1] and ncomp == 1, "C_1 holds: single observed increment, one component")
 check(c == 3, "incidence graph has three components")
 check(full == proj + c - 1, "dim K = dim K_tau + (c - 1)")
@@ -265,6 +274,89 @@ tz = trapezoid([1, 5, 13], 19); full, proj, rk, n = nullities(tz)
 check((len(tz), n, rk) == (41, 39, 35), "JLPS design: 41 cells, 39 free parameters, rank 35 (as quoted in Sections 3 and 8 and Appendix C)")
 tz = trapezoid([1, 4, 8], 8); full, proj, rk, n = nullities(tz)
 check((len(tz), n, rk) == (14, 17, 14), "E={1,4,8}, T=8: 14 cells, 17 parameters, rank 14 (as quoted after Theorem 1)")
+
+# ----------------------------------------------------------------------------------------------------------
+print(); print("=" * 100); print("(G) Proposition 3 without (CG): identified set for tau(2) under |drift| <= M, by exact Fourier-Motzkin\n")
+def kernel_basis(cells):
+    """rational basis of ker(cell design); returns (basis vectors, cols)"""
+    rows, cols = cell_design(cells); n = len(cols)
+    A = [[F(x) for x in r] for r in rows]; piv = []; rr = 0
+    for c in range(n):
+        pr = next((i for i in range(rr, len(A)) if A[i][c] != 0), None)
+        if pr is None: continue
+        A[rr], A[pr] = A[pr], A[rr]; pv = A[rr][c]; A[rr] = [x / pv for x in A[rr]]
+        for i in range(len(A)):
+            if i != rr and A[i][c] != 0:
+                f = A[i][c]; A[i] = [a - f * b for a, b in zip(A[i], A[rr])]
+        piv.append(c); rr += 1
+    basis = []
+    for fc in [c for c in range(n) if c not in piv]:
+        v = [F(0)] * n; v[fc] = F(1)
+        for i, c in enumerate(piv): v[c] = -A[i][fc]
+        basis.append(v)
+    return basis, cols
+
+def fm_bounds(ineqs, nvar, keep):
+    """ineqs: list of (coef list, rhs) meaning coef.x <= rhs; eliminate every variable except `keep`;
+    returns (lo, hi) for x[keep], None meaning unbounded on that side"""
+    cur = [(list(c), r) for c, r in ineqs]
+    for v in range(nvar):
+        if v == keep: continue
+        pos = [(c, r) for c, r in cur if c[v] > 0]; neg = [(c, r) for c, r in cur if c[v] < 0]
+        new = [(c, r) for c, r in cur if c[v] == 0]
+        for cp, rp in pos:
+            for cn, rn in neg:
+                a, b = cp[v], -cn[v]
+                new.append(([b * x + a * y for x, y in zip(cp, cn)], b * rp + a * rn))
+        cur = new
+    lo = hi = None
+    for c, r in cur:
+        a = c[keep]
+        if a > 0: hi = r / a if hi is None else min(hi, r / a)
+        elif a < 0: lo = r / a if lo is None else max(lo, r / a)
+        elif r < 0: raise ValueError("infeasible")
+    return lo, hi
+
+def identified_set_tau2(cells, M, rep_g):
+    """identified set for tau(2) = rep_tau(2) + h_tau(2) over all kernel vectors h with |drift(rep + h)| <= M;
+    rep_g maps e -> representative's g_hat(e) (default 0); rep_tau(2) = 0 throughout"""
+    basis, cols = kernel_basis(cells); k = len(basis); idx = {c: i for i, c in enumerate(cols)}
+    E = sorted({e for e, _ in cells}); e0 = E[0]
+    def gvec(e):
+        if e == e0: return [F(0)] * k, F(0)
+        return [b[idx[('g', e)]] for b in basis], F(rep_g.get(e, 0))
+    ineqs = []
+    for ea, eb in zip(E, E[1:]):
+        va, ca = gvec(ea); vb, cb = gvec(eb); sp = eb - ea
+        d = [(y - x) / sp for x, y in zip(va, vb)]; cd = (cb - ca) / sp
+        ineqs.append((d + [F(0)], M - cd)); ineqs.append(([-x for x in d] + [F(0)], M + cd))
+    tv = [b[idx[('u', 2)]] for b in basis]
+    ineqs.append((tv + [F(-1)], F(0))); ineqs.append(([-x for x in tv] + [F(1)], F(0)))   # z = tau(2)
+    return fm_bounds(ineqs, k + 1, k)
+
+def displayed_interval(cells, M, rep_g):
+    """the interval Proposition 3 displays for tau(2) - tau(1) at the representative: [m_lo, m_hi] x (s - 1)"""
+    E = sorted({e for e, _ in cells})
+    dh = [(F(rep_g.get(eb, 0)) - F(rep_g.get(ea, 0))) / (eb - ea) for ea, eb in zip(E, E[1:])]
+    return -M - min(dh), M - max(dh)
+
+M = F(1)
+five = {(e, e) for e in (1, 2, 5)} | {(e, e + 1) for e in (1, 2, 5)}
+lo, hi = identified_set_tau2(five, M, {}); dlo, dhi = displayed_interval(five, M, {})
+print(f"   cohorts {{1,2,5}}, two-cell schedule, zero means, zero representative: identified set [{lo}, {hi}] M, displayed [{dlo}, {dhi}] M")
+check((lo, hi) == (-M, M) and (dlo, dhi) == (-M, M) and incidence_components(five) == 2,
+      "two components, yet the displayed interval [-M, M] IS the identified set: (CG) is sufficient for Proposition 3, not necessary")
+lo, hi = identified_set_tau2(five, M, {5: F(27, 10)}); dlo, dhi = displayed_interval(five, M, {5: F(27, 10)})
+print(f"   same support, representative g_hat(5) = 2.7 M: identified set [{lo}, {hi}] M, displayed [{dlo}, {dhi}] M")
+check((lo, hi) == (-M, M) and (dlo, dhi) == (-M, F(1, 10)),
+      "without (CG) the displayed interval depends on the representative and here is strictly narrower than the identified set")
+for Mv in (F(1), F(0)):
+    lo, hi = identified_set_tau2(six, Mv, {}); dlo, dhi = displayed_interval(six, Mv, {})
+    print(f"   six-cell E={{1,4,6}}, M = {Mv}: identified set [{lo}, {hi}] (None = unbounded), displayed [{dlo}, {dhi}]")
+    check(lo is None and hi is None, f"tau(2) unbounded at M = {Mv} on the six-cell support while the displayed interval is [{dlo}, {dhi}]")
+tz = trapezoid([1, 2, 3], 5)
+lo, hi = identified_set_tau2(tz, M, {}); dlo, dhi = displayed_interval(tz, M, {})
+check((lo, hi) == (dlo, dhi) == (-M, M) and incidence_components(tz) == 1, "control: connected trapezoid E={1,2,3}, T=5 -- displayed interval = identified set = [-M, M]")
 
 print(); print("=" * 100)
 print(f"check_recovery_support.py: {fails} failure(s)")

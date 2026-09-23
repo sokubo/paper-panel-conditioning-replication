@@ -3,4 +3,5 @@
 .Rproj.user/
 __pycache__/
 *.log
+!RELEASE_CHECK_run.log
 .DS_Store

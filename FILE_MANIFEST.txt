@@ -15,6 +15,7 @@ sims/check_lemma1_trapezoid.py
 sims/check_manuscript_values.R
 sims/check_recovery_support.py
 sims/check_thm1_support.py
+sims/compare_outputs.py
 sims/design_rank.R
 sims/sim1_normalizations.R
 sims/sim1_results.csv

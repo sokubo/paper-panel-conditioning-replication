@@ -1,5 +1,5 @@
 # ============================================================
-# check_manuscript_values.R (v3, 2026-09-22) — every number quoted in Appendices A and C of T1 (v0.9) is ASSERTED
+# check_manuscript_values.R (v4, 2026-09-22) — every number quoted in Appendices A and C of T1 (v1.0) is ASSERTED
 # against the named column of the simulation output it comes from. Exit status 1 on any failure.
 #
 # v3 hardening (after the fourth review round):
@@ -68,6 +68,9 @@ run_checks <- function(dir = ".", quiet = FALSE) {
   }
   chk("A.1 contrast MC standard error <= .003 (sd/sqrt(500))", length(g0$sd_d4_contrast) == 4 && max(g0$sd_d4_contrast) / sqrt(500) <= 0.003, 1, tol = 0)
   chk("A.1 plateau-constrained bias under S3", one(s1, s1$cohort_g == "G0" & s1$scenario == "S3", "A.1 S3")$bias_taubar_N3, -0.097, digits = 3)
+  chk("A.1 overid rejection rates S1-S4 (G0), quoted in the text (.058 .048 .054 1)",
+      sapply(c("S1", "S2", "S3", "S4"), function(sc) one(s1, s1$cohort_g == "G0" & s1$scenario == sc, paste("A.1", sc))$rej_overid), c(.058, .048, .054, 1), digits = 3)
+  chk("A.1 overid rejection rate S4 (G1), quoted as 499 of 500", one(s1, s1$cohort_g == "G1" & s1$scenario == "S4", "A.1 S4 G1")$rej_overid, 499 / 500, digits = 3)
 
   ## ---- Appendix A.2 (sim2) ---------------------------------------------------------------------------------
   chk("sim2 has 2 rows (S2, S3)", nrow(s2), 2, tol = 0)
