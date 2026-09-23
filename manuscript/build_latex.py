@@ -23,7 +23,7 @@ LTX  = os.path.join(HERE, 'latex')
 # so the paper can never go out naming a commit that does not exist.
 ARCHIVE_REPO   = "https://github.com/sokubo/paper-panel-conditioning-replication"
 ARCHIVE_TAG    = "paper-v1.0"
-ARCHIVE_COMMIT = "COMMIT7"
+ARCHIVE_COMMIT = "f06283e"
 
 TITLE_THANKS = (
     r"\thanks{Code reproducing every numerical result in this paper, including the "
@@ -36,7 +36,7 @@ AUTHOR_THANKS = (
     r"\thanks{Department of Sociology, Toyo University, Tokyo, Japan. "
     r"Email: okubo080@toyo.jp. Website: sokubo.github.io.}"
 )
-DATE = 'September 22, 2026'
+DATE = 'September 23, 2026'
 KEYWORDS = (r"\noindent\textbf{Keywords:} panel conditioning; identification; "
             r"age-period-cohort; two-way fixed effects; event study; refreshment samples")
 # -----------------------------------------------------------------------------

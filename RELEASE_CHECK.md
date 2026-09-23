@@ -1,12 +1,12 @@
 # Release check — paper-panel-conditioning-replication
 
-Date: 2026-09-22T09:56:34Z. Snapshot downloaded anonymously (no credentials, no gh CLI) from `https://codeload.github.com/sokubo/paper-panel-conditioning-replication/tar.gz/ea044e655ced00e05f2a2442ab0fc19c607c5d77`.
+Date: 2026-09-23T00:34:06Z. Snapshot downloaded anonymously (no credentials, no gh CLI) from `https://codeload.github.com/sokubo/paper-panel-conditioning-replication/tar.gz/f06283e3039a4693bbe94e71060715191b1d4d48`.
 
-- ref: `ea044e655ced00e05f2a2442ab0fc19c607c5d77`; commit: `ea044e655ced00e05f2a2442ab0fc19c607c5d77`
-- archive SHA-256: `7b06d28b5ac4b957d55aca80065bd2e90c2e10fd46f19684da5b25cf0ae63bf0`
-- files in snapshot (excluding FILE_MANIFEST.txt and RELEASE_CHECK*): 30; listed in FILE_MANIFEST.txt: 30; missing from snapshot: 0; not listed in manifest: 0
+- ref: `f06283e3039a4693bbe94e71060715191b1d4d48`; commit: `f06283e3039a4693bbe94e71060715191b1d4d48`
+- archive SHA-256: `06deeb49b6c86b77c339a057ef531bacc2143c653ad518ca870a4846a627816e`
+- files in snapshot (excluding FILE_MANIFEST.txt and RELEASE_CHECK*): 31; listed in FILE_MANIFEST.txt: 31; missing from snapshot: 0; not listed in manifest: 0
 - restricted-data / review-material scan of the published snapshot: 0 file(s) matched
-- clean run: documented sequence executed in a clean copy with shipped outputs set aside (1475s); log and sessionInfo kept; comparison below
+- clean run: documented sequence executed in a clean copy with shipped outputs set aside (1414s); log and sessionInfo kept; comparison below
 - third-party reproduction: none; this record is the author's own re-execution.
 
 ## Environment of the clean run
@@ -43,20 +43,16 @@ numpy 2.5.3
 ## Regenerated vs shipped outputs
 
 ```
-                            file                        status max_abs_diff
-           sims/sim1_results.csv                     identical 0.000000e+00
-           sims/sim2_results.csv                     identical 0.000000e+00
-           sims/sim3_results.csv            numeric difference 9.992007e-15
- sims/sim4_manuscript_values.csv            numeric difference 1.540434e-13
-                sims/sim4_mc.csv            numeric difference 9.992007e-16
-    sims/sim4_pretrend_coefs.csv            numeric difference 3.589351e-13
-           sims/sim4_results.csv            numeric difference 3.497203e-15
-           sims/sim4_results.txt format differs; numbers match 4.330000e-15
+file                        max |diff|          cells/tokens  status
+sim1_results.csv            0.000e+00           -             identical
+sim2_results.csv            0.000e+00           -             identical
+sim3_results.csv            9.992e-15           250           within tolerance
+sim4_manuscript_values.csv  1.540e-13           52            within tolerance
+sim4_mc.csv                 9.992e-16           60            within tolerance
+sim4_pretrend_coefs.csv     3.589e-13           66            within tolerance
+sim4_results.csv            3.497e-15           250           within tolerance
+sim4_results.txt            4.330e-15           491           within tolerance
 
-files compared: 8; identical: 2; numeric difference: 5; format differs, numbers match: 1; max abs difference: 3.59e-13; not comparable: 0
-
-format diagnostics (printed whenever a token stream differs, so that a genuine change is never hidden):
-  sims/sim4_results.txt: regenerated 501 tokens vs shipped 501; first divergence at token 147
-      regenerated: tau_sat 0.5682 0.5937 2.556e-02 2.556e-02 5.516e-15 4.530e-14 6.217e-15 NA NA NA
-      shipped:     tau_sat 0.5682 0.5937 2.556e-02 2.556e-02 7.140e-15 4.441e-14 5.440e-15 NA NA NA 
+files compared: 8; identical: 2; within tolerance: 6; FAILED: 0; largest numeric difference: 3.589e-13; tol: 1e-08
+comparison passed
 ```
