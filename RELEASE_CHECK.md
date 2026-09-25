@@ -1,12 +1,12 @@
 # Release check — paper-panel-conditioning-replication
 
-Date: 2026-09-23T00:34:06Z. Snapshot downloaded anonymously (no credentials, no gh CLI) from `https://codeload.github.com/sokubo/paper-panel-conditioning-replication/tar.gz/f06283e3039a4693bbe94e71060715191b1d4d48`.
+Date: 2026-09-25T03:59:38Z. Snapshot downloaded anonymously (no credentials, no gh CLI) from `https://codeload.github.com/sokubo/paper-panel-conditioning-replication/tar.gz/d8561e30d141f0dd7fe171459fa95f28678e7e0d`.
 
-- ref: `f06283e3039a4693bbe94e71060715191b1d4d48`; commit: `f06283e3039a4693bbe94e71060715191b1d4d48`
-- archive SHA-256: `06deeb49b6c86b77c339a057ef531bacc2143c653ad518ca870a4846a627816e`
-- files in snapshot (excluding FILE_MANIFEST.txt and RELEASE_CHECK*): 31; listed in FILE_MANIFEST.txt: 31; missing from snapshot: 0; not listed in manifest: 0
-- restricted-data / review-material scan of the published snapshot: 0 file(s) matched
-- clean run: documented sequence executed in a clean copy with shipped outputs set aside (1414s); log and sessionInfo kept; comparison below
+- ref: `d8561e30d141f0dd7fe171459fa95f28678e7e0d`; commit: `d8561e30d141f0dd7fe171459fa95f28678e7e0d`
+- archive SHA-256: `0eb6fce8384bef65f66fc2edc646406819ebe06ddfbe8b7b4a566c6f9701b10f`
+- files in snapshot (excluding FILE_MANIFEST.txt and RELEASE_CHECK*): 37; listed in FILE_MANIFEST.txt: 37; missing from snapshot: 0; not listed in manifest: 0
+- content scan of the published snapshot: 0 file(s) matched
+- clean run: documented sequence executed in a clean copy with shipped outputs set aside (1434s); log and sessionInfo kept; comparison below
 - third-party reproduction: none; this record is the author's own re-execution.
 
 ## Environment of the clean run
@@ -56,26 +56,3 @@ sim4_results.txt            4.330e-15           491           within tolerance
 files compared: 8; identical: 2; within tolerance: 6; FAILED: 0; largest numeric difference: 3.589e-13; tol: 1e-08
 comparison passed
 ```
-
-## Follow-up check — 2026-09-25T01:41:12Z
-
-Snapshot downloaded anonymously from `https://codeload.github.com/sokubo/paper-panel-conditioning-replication/tar.gz/arxiv-2609.28871v1`.
-
-- ref: `arxiv-2609.28871v1`; commit: `8958bde4f9389655bc95bcea8640a1336861f427`
-- archive SHA-256: `81ec0eef89792e5f96527c02ef3aaeefa2946b16409af43f48ac645d087e234b`
-- files in snapshot (excluding FILE_MANIFEST.txt and RELEASE_CHECK*): 37; listed in FILE_MANIFEST.txt: 37; missing from snapshot: 0; not listed in manifest: 0
-- content scan of the published snapshot: 0 file(s) matched
-- comparison with the checked commit: 11 file(s) differ from the checked commit `f06283e3039a4693bbe94e71060715191b1d4d48` (RELEASE_CHECK* excluded)
-
-- CITATION.cff (differs)
-- FILE_MANIFEST.txt (differs)
-- README.md (differs)
-- manuscript/build_latex.py (differs)
-- manuscript/figures (only in one snapshot)
-- manuscript/latex/chicago-author-date.csl (only in one snapshot)
-- manuscript/latex/preamble_extra_T1.tex (differs)
-- manuscript/main.html (differs)
-- manuscript/main.pdf (differs)
-- manuscript/main.qmd (differs)
-- manuscript/references.bib (differs)
-- clean run: not repeated (the computational content is that of the checked commit when the list above contains documentation files only)

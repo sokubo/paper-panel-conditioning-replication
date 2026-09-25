@@ -1,4 +1,4 @@
-== sims/Rscript sim1_normalizations.R 09:10:32
+== sims/Rscript sim1_normalizations.R 12:35:44
 == (A) noiseless identity tests (d = 4) ==
   max |cell mean change| under tau -> tau + rho(s), alpha -> alpha - rho(t):  5.55e-17  (must be 0)
   ordinary D2 tau(3):     before -0.0223  after +0.6777  -> moves by +0.7000 (NOT identified)
@@ -24,7 +24,7 @@
          0.0674        -0.0949      0.068
          0.0604        -0.4078      1.000
          0.0652        -0.4095      0.998
-== sims/Rscript sim2_direct_contrast.R 09:10:41
+== sims/Rscript sim2_direct_contrast.R 12:35:52
 == (A) noiseless identity tests ==
   theta = D2 tau(2) - D2 tau(6): truth -0.03702 | explicit contrast -0.03702 | diff -6.9e-17
   regression readout of theta from an arbitrary representative: -0.03702 (diff 4.7e-16)  <- identified: exact
@@ -38,7 +38,7 @@
  d2_3_true_unidentified mean_d2_3_readout
                 -0.0223           -0.0747
                 -0.0223           -0.0723
-== sims/Rscript sim3_drift_bounds.R 09:10:41
+== sims/Rscript sim3_drift_bounds.R 12:35:52
 == population check ==
 d_perp (implied drifts of representative): 0.0117 0.0017 
 s=13 M=0.0100: tau(s) in [-0.0506, 0.0694] empty=FALSE | truth 0.2494 inside=FALSE
@@ -123,7 +123,7 @@ s=17 M=0.1000: tau(s) in [-1.5901, 1.4499] empty=FALSE | truth 0.2499 inside=TRU
  1.644856          0
 
 saved sim3_results.csv
-== sims/Rscript sim4_downstream.R 09:13:58
+== sims/Rscript sim4_downstream.R 12:38:59
 Cell-mean design (entries 1,5,13; T=19; tau(1)=g(1)=0): cells=41 columns=39 rank=35 nullity=4
 Tenure-determined adoption (D = 1{s>=4}): corrected coefficient on D = NA (NA = D aliased with tenure dummies: not identified)
 Rank-deficient event-study design (E in {0,2,4}, t 4..7, window 2..5): columns=8 rank=7 (all E even: k mod 2 = t mod 2)
@@ -259,7 +259,7 @@ Partial alignment (delta_i in {6,7}): composition balanced (share at delta=6 is 
 25:      partial_alignment_shift_k6 -1.00528e-01
                            quantity        value
                              <char>        <num>
-== sims/Rscript check_manuscript_values.R 09:33:49
+== sims/Rscript check_manuscript_values.R 12:59:21
 quantity                                                           from output        quoted            
 ----------------------------------------------------------------------------------------------------------------
 keys unique in sim1 (scenario x cohort_g)                          1                  1                  ok
@@ -337,7 +337,7 @@ C MC table tenure_adoption (reported)                              0.1488 0.1636
 C MC table tenure_adoption: corrected estimator not identified     1                  1                  ok
 ----------------------------------------------------------------------------------------------------------------
 checked 73 assertions (quoted quantities and structural checks): 73 reproduced, 0 MISMATCHED
-== sims/Rscript check_manuscript_values.R --selftest 09:33:49
+== sims/Rscript check_manuscript_values.R --selftest 12:59:22
 self-test: negative controls on perturbed copies of the outputs
    unmodified copy (must PASS)                                                        -> 0 mismatch(es): as expected
    delete the G4/s=13/M=M0 row of sim3 (must FAIL)                                    -> 6 mismatch(es): as expected
@@ -350,7 +350,7 @@ self-test: negative controls on perturbed copies of the outputs
    set an identity residual to 5e-11 (must PASS: within the scale-aware tolerance)    -> 0 mismatch(es): as expected
    delete the S3/G0 row of sim1 (must FAIL)                                           -> 8 mismatch(es): as expected
 self-test passed: every perturbation is detected and the unmodified copy passes
-== sims/Rscript design_rank.R 09:33:50
+== sims/Rscript design_rank.R 12:59:22
  cells parameters rank nullity stride_d nullity_equals_d increment_components
     41         39   35       4        4             TRUE                    4
  increment_complete  C_d w_last_cohort lemma1_condition three_cohort_formula
@@ -389,7 +389,7 @@ Design {1,4,8}, T=8 (d = 1 but C_1 fails):
 [[3]]
 [1] 1 4 7
 
-== sims/python3 check_thm1_support.py 09:33:50
+== sims/python3 check_thm1_support.py 12:59:22
 entries          Tmax  d=gcd  dim  dim==d  max|D2 tau|   Cor.2  max|M.dir|   Thm 3
 [1, 2]             10      1    1    True        0.000   holds     2.2e-15   holds
 [1, 2, 3]          10      1    1    True        0.000   holds     5.8e-15   holds
@@ -405,7 +405,7 @@ entries          Tmax  d=gcd  dim  dim==d  max|D2 tau|   Cor.2  max|M.dir|   Thm
 [1, 2, 5, 13]      19      1    1    True        0.000   holds     7.0e-15   holds
 [1, 3, 7]          14      2    2    True        2.112   FAILS     5.5e-15   holds
 [1, 9]             20      8    8    True        2.467   FAILS     9.9e-15   holds
-== sims/python3 check_lemma1_trapezoid.py 09:33:50
+== sims/python3 check_lemma1_trapezoid.py 12:59:22
 (a) K=3: exact formula nullity = max(d, (e2-e1) - (T-e3)) ?
    checked 1547, mismatches 0
 
@@ -420,7 +420,7 @@ entries          Tmax  d=gcd  dim  dim==d  max|D2 tau|   Cor.2  max|M.dir|   Thm
     ('got<pred', [1, 4, 5, 9], 10, 1, 1, 2, 1)
     ('got<pred', [1, 4, 5, 10], 11, 1, 1, 2, 1)
     ('got<pred', [1, 4, 5, 11], 12, 1, 1, 2, 1)
-== sims/python3 check_lemma1_components.py 09:33:55
+== sims/python3 check_lemma1_components.py 12:59:27
 ================================================================================================
 Lemma 1(o): nullity = #components of the increment graph;  (iv): nullity <= max(d, Delta_2 - w)
 
@@ -431,7 +431,7 @@ Lemma 1(o): nullity = #components of the increment graph;  (iv): nullity <= max(
   E=[1, 5, 9, 11, 12], T=12: cells=27 cols=27 nullity=3 d=1 w=0 components=3 [[1, 3, 5, 7, 9, 11], [2, 6, 10], [4, 8]] bound=max(1,4)=4
 
   sweep: 10934 designs (e_1 = 1, 3 <= K <= 5, T <= e_K + 13); violations of (o): 0; of (iv): 0; bound strict in 1188
-== sims/python3 check_interrupted.py 09:33:58
+== sims/python3 check_interrupted.py 12:59:30
 ====================================================================================================
 (A) dose designs
 
@@ -571,8 +571,8 @@ failures of the WITHDRAWN third-cohort conjecture: 72 (expected 72; not a proper
    rate is the same; under a constant change per interview the six in-block rates are equal and the 4->5 rate is
    one ninth of them.  The published tables carry no covariances and retain the cohort effects, so neither pattern
    is tested here and neither profile is an estimate of conditioning (Section 8.1).
-== sims/python3 check_dose_sharpness.py 09:33:59
-(i) the round-3 counterexample: E = {1,2,4}, J = {0,1,3}, T = 7
+== sims/python3 check_dose_sharpness.py 12:59:31
+(i) the counterexample to the v0.7 statement: E = {1,2,4}, J = {0,1,3}, T = 7
     cells=9 cols=10 rank=8 full nullity=2  tau-projection dimension=2  (v0.7 asserted 1; the cohort set has a gap, (P') fails)
 
 (ii) sweep: arithmetic-progression cohorts, full field period; (P') predicts dim = #classes mod d
@@ -604,7 +604,7 @@ failures of the WITHDRAWN third-cohort conjecture: 72 (expected 72; not a proper
     J=[0, 1, 3, 4], d=3: tau-dim=2, dose-linear path in kernel: True  (k-1 = (2/3) j + rho, rho = 1/3 on the class of 1)
 
 all assertions passed
-== sims/python3 check_recovery_support.py 09:34:02
+== sims/python3 check_recovery_support.py 12:59:34
 ====================================================================================================
 (A) full kernel vs tenure projection; connectedness in Propositions 2-3
 
@@ -685,8 +685,8 @@ all assertions passed
 
 ====================================================================================================
 check_recovery_support.py: 0 failure(s)
-== sims/python3 compare_outputs.py --selftest output_shipped 09:34:06
-self-test of compare_outputs.py on corrupted copies of output_shipped (25 cases)
+== sims/python3 compare_outputs.py --selftest output_shipped 12:59:38
+self-test of compare_outputs.py on corrupted copies of output_shipped (27 cases)
 
    unmodified copy                                                                      -> pass   as expected
    CSV text label changed in the first data row (sim1_results.csv)                      -> FAIL   as expected
@@ -697,6 +697,8 @@ self-test of compare_outputs.py on corrupted copies of output_shipped (25 cases)
    CSV numeric cell replaced by NA (sim1_results.csv)                                   -> FAIL   as expected
    CSV missing cell replaced by 0 (sim4_mc.csv)                                         -> FAIL   as expected
    CSV missing cell written as NaN instead of empty/NA (sim4_mc.csv)                    -> pass   as expected
+   CSV all-empty record appended (delimiters only) (sim1_results.csv)                   -> FAIL   as expected
+   CSV blank physical lines appended (sim1_results.csv)                                 -> pass   as expected
    CSV last data row duplicated (sim1_results.csv)                                      -> FAIL   as expected
    CSV last data row deleted (sim1_results.csv)                                         -> FAIL   as expected
    CSV two data rows swapped (sim1_results.csv)                                         -> FAIL   as expected
@@ -708,10 +710,10 @@ self-test of compare_outputs.py on corrupted copies of output_shipped (25 cases)
    TXT NA printed as NaN (sim4_results.txt)                                             -> pass   as expected
    TXT NA replaced by a number (sim4_results.txt)                                       -> FAIL   as expected
    TXT trailing whitespace and CRLF line endings (sim4_results.txt)                     -> pass   as expected
-   review control: sim3 scenario label G2 -> WRONG_DGP                                  -> FAIL   as expected
-   review control: sim4_mc design baseline -> WRONG_DESIGN and B 100 -> 101             -> FAIL   as expected
-   review control: sim4_mc B 100 -> 101 alone                                           -> FAIL   as expected
-   review control: transcript rank=35 -> rank=34                                        -> FAIL   as expected
+   fixed control: sim3 scenario label G2 -> WRONG_DGP                                   -> FAIL   as expected
+   fixed control: sim4_mc design baseline -> WRONG_DESIGN and B 100 -> 101              -> FAIL   as expected
+   fixed control: sim4_mc B 100 -> 101 alone                                            -> FAIL   as expected
+   fixed control: transcript rank=35 -> rank=34                                         -> FAIL   as expected
    TXT one line deleted (sim4_results.txt)                                              -> FAIL   as expected
 
-self-test passed: 20 corruptions all detected, 5 benign variants all accepted
+self-test passed: 21 corruptions all detected, 6 benign variants all accepted
