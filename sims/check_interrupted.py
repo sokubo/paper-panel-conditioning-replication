@@ -196,7 +196,7 @@ for k, (c, tot) in res.items():
     actual = tau(k + 6) - (tau(-1 + 6) + (k + 1) * (tau(-2 + 6) - tau(-1 + 6)) / (-2 + 1))
     print(f"   k={k:+d}: |shift| = {abs(actual):.4f}  <=  C * sum|w| = {C * float(tot):.4f}   (ratio {abs(actual) / (C * float(tot)):.2f})")
 
-# --- (D') equality test of Proposition 5's bound (round 3, M2): constant curvature +C or -C attains it; alternating
+# --- (D') equality test of Proposition 5's bound: constant curvature +C or -C attains it; alternating
 #      curvature does not.  Shift(k) = f(k) - L[f](k) with adjacent references k0=-1, k1=-2 and window k in [-5, 6].
 def shift_of(f, k, k0=-1, k1=-2):
     return f(k) - (f(k0) + (k - k0) * (f(k1) - f(k0)) / (k1 - k0))

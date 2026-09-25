@@ -8,7 +8,7 @@ abstract, colorlinks. Everything except the two \\thanks strings comes from the
 qmd's `pdf` format block; the \\thanks are patched in here because they are
 LaTeX-only and would leak into the HTML if put in the YAML.
 
-Re-run after any edit to main.qmd. Requires Quarto and XeLaTeX. The reviewed build used Quarto 1.6.42
+Re-run after any edit to main.qmd. Requires Quarto and XeLaTeX. The build of the posted version used Quarto 1.6.42
 (Pandoc 3.4) and XeTeX from TeX Live 2023; the PDF engine and the citation style (latex/chicago-author-date.csl,
 Pandoc's built-in Chicago author-date style, archived here) are pinned in main.qmd. Numerical content does not
 depend on the toolchain; exact pagination and citation formatting do.

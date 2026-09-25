@@ -2,7 +2,7 @@
 # check_manuscript_values.R (v4, 2026-09-22) — every number quoted in Appendices A and C of T1 (v1.0) is ASSERTED
 # against the named column of the simulation output it comes from. Exit status 1 on any failure.
 #
-# v3 hardening (after the fourth review round):
+# v3 hardening:
 #   * every row selector must return EXACTLY ONE row (a deleted or duplicated row is a failure, not a vacuous pass:
 #     v2 let all(numeric(0) == x) succeed on an empty selection);
 #   * every compared vector must have the expected length and only finite values;

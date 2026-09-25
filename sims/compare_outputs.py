@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """compare_outputs.py — file-by-file, cell-by-cell comparison of regenerated outputs against shipped ones.
 T1 v1.0 (2026-09-22).  Standard library only.  Written for the release check of the replication archive
-(replication README, "Release verification"), after the round-5 review showed that the earlier comparator's
+(replication README, "Release verification"), after controlled tests showed that the earlier comparator's
 token-stream fallback accepted a changed scenario label and a changed integer count.
 
     python3 compare_outputs.py NEW_DIR OLD_DIR [--tol 1e-8] [--verdict FILE]
@@ -58,7 +58,11 @@ def read_text(path):
 def compare_csv(pnew, pold, tol):
     new = list(csv.reader(io.StringIO(read_text(pnew))))
     old = list(csv.reader(io.StringIO(read_text(pold))))
-    new = [r for r in new if any(c.strip() for c in r)]; old = [r for r in old if any(c.strip() for c in r)]
+    # drop physical blank lines only (a record with no field or a single empty field); a record that carries
+    # delimiters but only empty fields is a data row and must be counted, so that an appended all-empty
+    # record changes the row count and fails the comparison
+    blank = lambda r: len(r) == 0 or (len(r) == 1 and not r[0].strip())
+    new = [r for r in new if not blank(r)]; old = [r for r in old if not blank(r)]
     if not new or not old:
         return False, 0.0, 0, "empty file (%d vs %d rows)" % (len(new), len(old))
     if new[0] != old[0]:
@@ -169,6 +173,8 @@ def selftest(srcdir, tol):
     if with_na:
         case("CSV missing cell replaced by 0 (%s)" % with_na, True, lambda d: edit(d, with_na, lambda s: (lambda ij: csv_cell(s, ij[0], ij[1], lambda v: "0"))(first_na(s))))
         case("CSV missing cell written as NaN instead of empty/NA (%s)" % with_na, False, lambda d: edit(d, with_na, lambda s: (lambda ij: csv_cell(s, ij[0], ij[1], lambda v: "NaN"))(first_na(s))))
+    case("CSV all-empty record appended (delimiters only) (%s)" % c0, True, lambda d: edit(d, c0, lambda s: s.rstrip("\n") + "\n" + "," * (len(list(csv.reader([csv_rows(s)[0]]))[0]) - 1) + "\n"))
+    case("CSV blank physical lines appended (%s)" % c0, False, lambda d: edit(d, c0, lambda s: s.rstrip("\n") + "\n\n\n"))
     case("CSV last data row duplicated (%s)" % c0, True, lambda d: edit(d, c0, lambda s: s.rstrip("\n") + "\n" + csv_rows(s)[-1] + "\n"))
     case("CSV last data row deleted (%s)" % c0, True, lambda d: edit(d, c0, lambda s: "\n".join(csv_rows(s)[:-1]) + "\n"))
     case("CSV two data rows swapped (%s)" % c0, True, lambda d: edit(d, c0, lambda s: (lambda r: "\n".join([r[0], r[2], r[1]] + r[3:]) + "\n")(csv_rows(s))))
@@ -183,14 +189,14 @@ def selftest(srcdir, tol):
         case("TXT NA printed as NaN (%s)" % t0, False, lambda d: edit(d, t0, lambda s: s.replace(" NA ", " NaN ").replace(" NA\n", " NaN\n")))
         case("TXT NA replaced by a number (%s)" % t0, True, lambda d: edit(d, t0, lambda s: s.replace(" NA ", " 0.0 ", 1)))
     case("TXT trailing whitespace and CRLF line endings (%s)" % t0, False, lambda d: edit(d, t0, lambda s: s.replace("\n", "   \r\n")))
-    # the exact controls used in the round-5 pre-submission review of the paper, when the T1 outputs are the ones being tested
+    # four fixed controls added on 22 September 2026, used when the T1 outputs are the ones being tested
     if "sim3_results.csv" in csvs and '"G2"' in read_text(os.path.join(srcdir, "sim3_results.csv")):
-        case("review control: sim3 scenario label G2 -> WRONG_DGP", True, lambda d: edit(d, "sim3_results.csv", lambda s: s.replace('"G2"', '"WRONG_DGP"', 1)))
+        case("fixed control: sim3 scenario label G2 -> WRONG_DGP", True, lambda d: edit(d, "sim3_results.csv", lambda s: s.replace('"G2"', '"WRONG_DGP"', 1)))
     if "sim4_mc.csv" in csvs and "baseline,100," in read_text(os.path.join(srcdir, "sim4_mc.csv")):
-        case("review control: sim4_mc design baseline -> WRONG_DESIGN and B 100 -> 101", True, lambda d: edit(d, "sim4_mc.csv", lambda s: s.replace("baseline,100,", "WRONG_DESIGN,101,", 1)))
-        case("review control: sim4_mc B 100 -> 101 alone", True, lambda d: edit(d, "sim4_mc.csv", lambda s: s.replace("baseline,100,", "baseline,101,", 1)))
+        case("fixed control: sim4_mc design baseline -> WRONG_DESIGN and B 100 -> 101", True, lambda d: edit(d, "sim4_mc.csv", lambda s: s.replace("baseline,100,", "WRONG_DESIGN,101,", 1)))
+        case("fixed control: sim4_mc B 100 -> 101 alone", True, lambda d: edit(d, "sim4_mc.csv", lambda s: s.replace("baseline,100,", "baseline,101,", 1)))
     if "sim4_results.txt" in txts and "rank=35" in tx:
-        case("review control: transcript rank=35 -> rank=34", True, lambda d: edit(d, "sim4_results.txt", lambda s: s.replace("rank=35", "rank=34", 1)))
+        case("fixed control: transcript rank=35 -> rank=34", True, lambda d: edit(d, "sim4_results.txt", lambda s: s.replace("rank=35", "rank=34", 1)))
     case("TXT one line deleted (%s)" % t0, True, lambda d: edit(d, t0, lambda s: "\n".join(l for i, l in enumerate(s.split("\n")) if i != 2)))
     root = tempfile.mkdtemp("compare_selftest"); allok = True
     print("self-test of compare_outputs.py on corrupted copies of %s (%d cases)\n" % (srcdir, len(cases)))

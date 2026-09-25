@@ -13,8 +13,8 @@ Preprint: arXiv:2609.28871. Author: Shoki Okubo (Toyo University).
 release-check records (`RELEASE_CHECK*`), which are written after the manifest.
 
 ## Checked commit and release record
-Computational commit checked against the numerical results of the manuscript: `f06283e3039a4693bbe94e71060715191b1d4d48` — see `RELEASE_CHECK.md`, `RELEASE_CHECK_run.log` (the console output of the clean-copy run) and `RELEASE_CHECK_sessionInfo.txt`. Later commits change only the manuscript (its source, PDF and any figure script under `manuscript/`), documentation and the release record — `git diff --stat f06283e3039a4693bbe94e71060715191b1d4d48 HEAD` lists them — so the computational scripts and outputs are those of the checked commit; after any change to them the release check is rerun and this line is regenerated.
-Tag of the checked release: `paper-v1.0`. Tag matching the posted preprint version: `arxiv-2609.28871v1`.
+Computational commit checked against the numerical results of the manuscript: not yet checked for this version. The `RELEASE_CHECK*` files in this snapshot are the record of the previously checked commit `f06283e3039a4693bbe94e71060715191b1d4d48`, whose scripts or outputs differ from these; the release check is rerun on this version before it is tagged, and this line is then regenerated.
+Tag of the checked release: `paper-v1.1`. Tag matching the posted preprint version: `arxiv-2609.28871v1`.
 Third-party reproduction: none. The release record is the author's own re-execution of the published snapshot in a clean copy.
 
 ## Data
@@ -47,7 +47,7 @@ No data are distributed with this archive and none are needed. Every number in t
 | 10 | `sims/check_interrupted.py` | console | ~5 s | Theorem 2(a),(d), Table 1 (dose designs); Lemma 1(iv) sweep (10,934 designs; the 72 failures reported there are of the withdrawn third-cohort conjecture, not of the lemma); Proposition 5's weights and the constant-curvature equality test; §8.1's descriptive Table 2 (Appendix D) |
 | 11 | `sims/check_dose_sharpness.py` | console | ~10 s | Theorem 2(b): the earlier counterexample (cohorts {1,2,4}, offsets {0,1,3}) and condition (P') verified by exact arithmetic over 496 designs; the CPS ten-cohort threshold; the two d > 1 examples cited in §3.4 (Appendix D) |
 | 12 | `sims/check_recovery_support.py` | console; exit status | ~15 s | exact arithmetic: the six-cell disconnected support (C_1 holds, full nullity 3, projected nullity 1, tau(2) free with g known) and the identity dim K = dim K_tau + (c-1) on 9,183 supports (Theorem 1(d), condition (CG) of §5); the identified sets for tau(2) under a drift bound on the {1,2,5} and six-cell supports by exact Fourier–Motzkin elimination, against the interval Proposition 3 displays (block G: (CG) is sufficient for that interval to be the identified set, not necessary; without it the displayed interval depends on the representative and can be strictly narrower); the post-event-reference example for Theorem 5's premise (rank 16, pre-coefficient +1/2); the failure of (R) under D = 1{s>=4} with two exact fits; Corollary 1 at d = 2; the plateau boundary; the population widths of G4; the uninterrupted rows of Table 1 (Appendix D) |
-| 13 | `sims/compare_outputs.py --selftest .` | console; exit status | seconds | self-test of the output comparator used by the release check, on corrupted copies of the shipped outputs in `sims/`: 20 corruptions (changed label, changed integer count with and without a label change, perturbed value, value replaced by NA, NA replaced by a value, duplicated / deleted / swapped row, dropped / renamed column, missing file, changed transcript number, changed transcript verdict, deleted transcript line, and four controls added on 22 September 2026) must each fail, and 5 benign variants (unmodified copy, perturbation of 1e-12, NA written as NaN in a CSV and in the transcript, trailing whitespace with CRLF endings) must pass |
+| 13 | `sims/compare_outputs.py --selftest .` | console; exit status | seconds | self-test of the output comparator used by the release check, on corrupted copies of the shipped outputs in `sims/`: 21 corruptions (changed label, changed integer count with and without a label change, perturbed value, value replaced by NA, NA replaced by a value, appended record of empty fields, duplicated / deleted / swapped row, dropped / renamed column, missing file, changed transcript number, changed transcript verdict, deleted transcript line, and four controls added on 22 September 2026) must each fail, and 6 benign variants (unmodified copy, perturbation of 1e-12, NA written as NaN in a CSV and in the transcript, appended blank lines, trailing whitespace with CRLF endings) must pass |
 
 Seeds are fixed inside each script (sim1–2: as in file; sim3: 20260830; sim4: 20260916). Scripts are run from `sims/` and write into it. The whole sequence (14 commands, counting 5b) takes about 50 minutes, of which Simulation 4's Monte Carlo (five designs, B = 100) is 30 and Simulation 3 is 18; steps 5–13 together take about a minute. Steps 6–13 are deterministic — no randomness and no data — so they either reproduce exactly or fail. Steps 11 and 12, the named designs of step 9, and blocks (A) and (D') of step 10 use exact rational arithmetic; steps 6, 7, 8 and the two 10,934-design sweeps (steps 9 and 10) use floating-point rank (numpy SVD at tolerance 1e-10, R's `qr`), which for these small 0–1 matrices returns the same integers as the exact code on every named design.
 
@@ -68,10 +68,10 @@ inspect. The rule is file by file and cell by cell, with no fallback:
 - for a CSV, the column names must be identical and in the same order, the numbers of rows and columns must be
   identical, a missing cell (empty, `NA` or `NaN`) must be missing in both, a cell that is a number in both must agree
   to within `TOL` (default 1e-8) in absolute value — integer counts included, so `B = 100` against `101` fails — and
-  any other cell (a scenario label, a design name) must be byte-identical. (In the comparator shipped with tag
-  `paper-v1.0`, a record that contains only delimiters and empty fields was dropped before the row counts were
+  any other cell (a scenario label, a design name) must be byte-identical. (In the comparator shipped with tags
+  `paper-v1.0` and `arxiv-2609.28871v1`, a record that contains only delimiters and empty fields was dropped before the row counts were
   compared, so such an appended record was not caught by this function alone; the named-value checker of step 5
-  (`sims/check_manuscript_values.R`) rejects the resulting row count. Later versions retain such records and add the case to the self-test.)
+  (`sims/check_manuscript_values.R`) rejects the resulting row count. From tag `paper-v1.1` on, such a record is counted as a row and the case is part of the self-test; only physical blank lines are ignored.)
 - for the console transcript `sim4_results.txt`, the number of non-blank lines must be identical after trailing
   whitespace and line endings are normalised, each line must split into the same number of whitespace-separated
   tokens, and each token is compared by the same cell rule, so a changed rank (`rank=35` against `rank=34`) or a
@@ -93,8 +93,8 @@ or a changed integer count could be accepted as `format differs; numbers match`.
 base R's data-frame printer at a fixed, very wide console, so that its layout does not depend on the installed
 `data.table` version, and the comparator no longer has a fallback. The release records of the earlier tags
 (`paper-v0.7`, `paper-v0.9`) were produced with the old comparator and do not carry the guarantee described above;
-the `paper-v1.0` record re-executes the computational scripts of this snapshot and compares their outputs with the
-present comparator.
+the records from `paper-v1.0` on re-execute the computational scripts of their snapshot and compare the outputs with
+the comparator of that snapshot.
 
 *Floating point.* The shipped outputs were produced under R 4.3.3 on x86-64 Linux; the release checks of
 21–22 September 2026 ran R 4.6.0 on macOS arm64, with a different BLAS and LAPACK. Differences of order
@@ -128,7 +128,7 @@ R, a different Python and a different `numpy` from those used to write the paper
 
 `manuscript/main.qmd` (source), `references.bib`, `latex/preamble_extra_T1.tex`, `latex/chicago-author-date.csl`, `build_latex.py`, `figures/` (Figures 1 and 2 and `make_figures.py`). Render: `python3 figures/make_figures.py`, then `quarto render main.qmd --to html` and `python3 build_latex.py`.
 
-*Versions.* The numerical results are those of tag `paper-v1.0` (computational commit `f06283e`). The manuscript in that tag is the 73-page version of 23 September 2026. The arXiv version (dated 24 September 2026) adds presentation and reference updates and Figures 1 and 2, and changes no numerical result; its source, PDF and figure script are in `manuscript/` from the tag `arxiv-2609.28871v1` on, and the scripts and outputs outside `manuscript/` in that tag are those of the checked commit.
+*Versions.* The numerical results are those of tag `paper-v1.0` (computational commit `f06283e`). The manuscript in that tag is the 73-page version of 23 September 2026. The arXiv version (dated 24 September 2026) adds presentation and reference updates and Figures 1 and 2, and changes no numerical result; its source, PDF and figure script are in `manuscript/` from the tag `arxiv-2609.28871v1` on, and the scripts and outputs outside `manuscript/` in that tag are those of `paper-v1.0`. Tag `paper-v1.1` changes, outside `manuscript/`, only the output comparator (a record of empty fields is counted as a row, with the two self-test cases above) and comments or a printed label in four check scripts; no script that produces a number of the paper changed, its release check re-executes the documented sequence with the new comparator, and the numerical results are those of `paper-v1.0`.
 
 ## Citation
 Okubo, S. (2026). Panel Conditioning in Fixed-Effects Models: Identification and Bias Propagation. arXiv preprint arXiv:2609.28871.

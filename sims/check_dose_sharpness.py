@@ -1,6 +1,6 @@
 """T1 v0.8 — sharpness of the interrupted-participation kernel (Theorem 2(b)), exact arithmetic.
 
-Round-3 review produced a counterexample to the v0.7 statement, whose condition (P) asked only that every
+A counterexample refuted the v0.7 statement, whose condition (P) asked only that every
 spacing in dZ ∩ [1, j_K] be REALIZED by some cohort pair.  The corrected sufficient condition (P') is
 structural:
 
@@ -77,7 +77,7 @@ def P_prime(J, d, L):
     return (d in {b - a for a in J for b in J if b > a}) and (L * d >= Gamma(J, d))
 
 if __name__ == "__main__":
-    print("(i) the round-3 counterexample: E = {1,2,4}, J = {0,1,3}, T = 7")
+    print("(i) the counterexample to the v0.7 statement: E = {1,2,4}, J = {0,1,3}, T = 7")
     nul, td, nc, ncol, r = tau_dim([1, 2, 4], [0, 1, 3], 7)
     print(f"    cells={nc} cols={ncol} rank={r} full nullity={nul}  tau-projection dimension={td}  "
           f"(v0.7 asserted 1; the cohort set has a gap, (P') fails)")

@@ -28,7 +28,7 @@ network, no other scripts.  Run:  python3 check_recovery_support.py     (exit st
 (D) Corollary 1's residue classes for d = 2, and the centred plateau boundary of Proposition 1.
 (E) Simulation 3, design G4: population width of the identified set for m at M = M0 with both true drifts
     equal to M0 is 2 M0 - (max d - min d) = 2 M0 = .050, and the widths for tau(13) and tau(17) are .600 and .800.
-(G) Proposition 3 without (CG) (round-5 review, N1).  The identified set for tau(2) under the drift bound M is
+(G) Proposition 3 without (CG).  The identified set for tau(2) under the drift bound M is
     computed EXACTLY by Fourier-Motzkin elimination over the kernel coefficients, and compared with the interval
     Proposition 3 displays for a given representative.  On cohorts {1, 2, 5}, two-cell schedule, zero cell means,
     zero representative: identified set [-M, M] = displayed interval, although the incidence graph has two
