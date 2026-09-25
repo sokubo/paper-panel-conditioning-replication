@@ -8,7 +8,10 @@ abstract, colorlinks. Everything except the two \\thanks strings comes from the
 qmd's `pdf` format block; the \\thanks are patched in here because they are
 LaTeX-only and would leak into the HTML if put in the YAML.
 
-Re-run after any edit to main.qmd. Requires quarto + pdflatex.
+Re-run after any edit to main.qmd. Requires Quarto and XeLaTeX. The reviewed build used Quarto 1.6.42
+(Pandoc 3.4) and XeTeX from TeX Live 2023; the PDF engine and the citation style (latex/chicago-author-date.csl,
+Pandoc's built-in Chicago author-date style, archived here) are pinned in main.qmd. Numerical content does not
+depend on the toolchain; exact pagination and citation formatting do.
 """
 import subprocess, shutil, os, re, sys
 
@@ -25,18 +28,22 @@ ARCHIVE_REPO   = "https://github.com/sokubo/paper-panel-conditioning-replication
 ARCHIVE_TAG    = "paper-v1.0"
 ARCHIVE_COMMIT = "f06283e"
 
+# House format of the author's arXiv papers (2609.16618): acknowledgement of presentations first, then the
+# replication archive, then the funding statement.
 TITLE_THANKS = (
-    r"\thanks{Code reproducing every numerical result in this paper, including the "
-    r"downstream identities of Section 6 and every row of Tables 1 and 2, is in the "
-    r"replication archive at \url{%s} (fixed version: tag \texttt{%s}, commit "
-    r"\texttt{%s}). No restricted data are used. This work was supported by JSPS "
-    r"KAKENHI Grant Number 22K13525.}" % (ARCHIVE_REPO, ARCHIVE_TAG, ARCHIVE_COMMIT)
+    r"\thanks{This research benefited from discussions and feedback during presentations at "
+    r"the Institute of Social Science, University of Tokyo, the Japanese Association for Mathematical "
+    r"Sociology, and the panel survey conference at Keio University. "
+    r"Code reproducing every numerical result in this paper, including the downstream identities of "
+    r"Section 6 and every row of Tables 1 and 2, is in the replication archive at \url{%s} (fixed "
+    r"version: tag \texttt{%s}, commit \texttt{%s}). No restricted data are used. "
+    r"This work was supported by JSPS KAKENHI Grant Number 22K13525.}" % (ARCHIVE_REPO, ARCHIVE_TAG, ARCHIVE_COMMIT)
 )
 AUTHOR_THANKS = (
     r"\thanks{Department of Sociology, Toyo University, Tokyo, Japan. "
     r"Email: okubo080@toyo.jp. Website: sokubo.github.io.}"
 )
-DATE = 'September 23, 2026'
+DATE = 'September 24, 2026'
 KEYWORDS = (r"\noindent\textbf{Keywords:} panel conditioning; identification; "
             r"age-period-cohort; two-way fixed effects; event study; refreshment samples")
 # -----------------------------------------------------------------------------
@@ -84,6 +91,22 @@ if not m:
     sys.exit('no \\author in generated tex')
 tex = tex[:m.end()-1] + AUTHOR_THANKS + tex[m.end()-1:]
 
+# keep Table 1 (design examples) and Table 2 (CPS indices) from splitting into a two-row stub at a page foot:
+# \needspace moves the table to the next page when less than the stated height remains (layout only)
+NEEDSPACE = {'Schedule: entry stride': r'0.65\textheight', 'Source and item': r'0.3\textheight'}
+def _needspace(tex):
+    out, pos = [], 0
+    for m in re.finditer(r'\\begin\{longtable\}', tex):
+        head = tex[m.start():m.start() + 4000]
+        for key, h in NEEDSPACE.items():
+            if key in head:
+                out.append(tex[pos:m.start()]); out.append('\\needspace{%s}\n' % h); pos = m.start(); break
+    out.append(tex[pos:])
+    return ''.join(out)
+tex = _needspace(tex)
+if tex.count('\\needspace{') != len(NEEDSPACE):
+    sys.exit('needspace: expected %d tables, patched %d' % (len(NEEDSPACE), tex.count('\\needspace{')))
+
 # visible Keywords line after the abstract (house format)
 if r'\textbf{Keywords:}' not in tex:
     tex = tex.replace(r'\end{abstract}', '\\end{abstract}\n\n' + KEYWORDS + '\n', 1)
@@ -93,6 +116,9 @@ tex = re.sub(r'\\date\{[^}]*\}', r'\\date{' + DATE + (r' --- DRAFT BUILD, archiv
 
 os.makedirs(LTX, exist_ok=True)
 open(os.path.join(LTX, 'main.tex'), 'w').write(tex)
+figs = os.path.join(HERE, 'figures')
+if os.path.isdir(figs):
+    shutil.copytree(figs, os.path.join(LTX, 'figures'), dirs_exist_ok=True)
 os.remove(tex_src)
 shutil.copy(os.path.join(HERE, 'references.bib'), os.path.join(LTX, 'references.bib'))
 # citations are already resolved by citeproc, so a plain two-pass run suffices

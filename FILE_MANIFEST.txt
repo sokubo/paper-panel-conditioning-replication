@@ -2,6 +2,12 @@
 CITATION.cff
 LICENSE
 manuscript/build_latex.py
+manuscript/figures/fig1_jlps_support.pdf
+manuscript/figures/fig1_jlps_support.png
+manuscript/figures/fig2_cps_rates.pdf
+manuscript/figures/fig2_cps_rates.png
+manuscript/figures/make_figures.py
+manuscript/latex/chicago-author-date.csl
 manuscript/latex/preamble_extra_T1.tex
 manuscript/main.html
 manuscript/main.pdf
